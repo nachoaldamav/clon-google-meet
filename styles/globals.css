@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+video {
+  @apply h-full w-auto rounded-lg object-cover shadow-lg;
+}
