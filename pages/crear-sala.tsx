@@ -16,10 +16,8 @@ export default function CrearSala() {
     }
 
     if (user) {
-      console.log('user', user)
       const room = createRoom(user)
         .then((data) => {
-          console.log('room', data.id)
           router.push(`/room/${data.id}`)
         })
         .catch((error) => {
@@ -54,14 +52,12 @@ async function createRoom(user: any) {
       }
     }
   }`
-  console.log('query', query)
 
   const { data, error } = await nhost.graphql.request(query)
 
   if (error) {
     throw error
   } else {
-    console.log('data', data)
     return data.insert_rooms.returning[0]
   }
 }

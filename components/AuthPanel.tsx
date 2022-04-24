@@ -1,5 +1,5 @@
-import nhost from '../../libs/nhost'
-import LoadingIcon from '../../components/icons/Loading'
+import nhost from '../libs/nhost'
+import LoadingIcon from './icons/Loading'
 import { useAccessToken, useAuthenticated, useUserData } from '@nhost/nextjs'
 import { useState } from 'react'
 import { useRouter } from 'next/router'

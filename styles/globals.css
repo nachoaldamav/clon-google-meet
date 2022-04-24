@@ -1,7 +1,11 @@
 @tailwind base;
+* {
+  @apply font-display;
+}
+
 @tailwind components;
 @tailwind utilities;
 
 video {
-  @apply h-full w-auto rounded-lg object-cover shadow-lg;
+  @apply h-full w-auto rounded-lg object-cover shadow-lg blur;
 }

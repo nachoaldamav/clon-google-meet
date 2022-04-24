@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useAuthenticated, useUserData } from '@nhost/nextjs'
 import { useRouter } from 'next/router'
-import AuthPanel from '../components/icons/AuthPanel'
+import AuthPanel from '../components/AuthPanel'
 import nhost from '../libs/nhost'
 import Link from 'next/link'
 
