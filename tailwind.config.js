@@ -8,5 +8,5 @@ module.exports = {
       display: ['Inter', 'sans-serif'],
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }

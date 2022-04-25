@@ -4,6 +4,7 @@ import LoadingIcon from '../../components/icons/Loading'
 import PhoneIcon from '../../components/icons/Phone'
 import MicIcon from '../../components/icons/Mic'
 import CameraIcon from '../../components/icons/Camera'
+import ScreenIcon from '../../components/icons/Screen'
 import {
   getNhostSession,
   useAccessToken,
@@ -13,11 +14,15 @@ import {
 import * as Video from 'twilio-video'
 import getRoomData from '../../utils/getRoom'
 import PreflightCheck from '../../components/preflightCheck'
+import detachTracks from '../../utils/detachTracks'
+import { stopTracks } from '../../utils/stopTracks'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
   const id = router.query.id
   const [time, setTime] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  const [muted, setMuted] = useState(false)
   const [preflight, setPreflight] = useState(false)
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
@@ -36,6 +41,9 @@ const ServerSidePage = ({ user }) => {
     if (!accessToken) {
       router.push('/')
     }
+
+    const isPhone = checkDevice(navigator.userAgent)
+    setIsMobile(isPhone)
 
     const preflightStorage = localStorage.getItem('preflight')
     if (preflightStorage) {
@@ -102,6 +110,44 @@ const ServerSidePage = ({ user }) => {
       twilioRoom.on('participantDisconnected', participantDisconnected)
     }
   }, [twilioRoom])
+
+  useEffect(() => {
+    if (twilioRoom) {
+      // Remove previous video tracks
+      const localParticipant = twilioRoom.localParticipant
+      const tracks = Array.from(localParticipant.videoTracks.values()).map(
+        function (trackPublication) {
+          return trackPublication.track
+        }
+      )
+      localParticipant.unpublishTracks(tracks)
+      detachTracks(tracks)
+      stopTracks(tracks)
+
+      // Add new video track
+      if (input === 'camera') {
+        const screenTrack = navigator.mediaDevices
+          .getUserMedia({
+            video: true,
+            audio: true,
+          })
+          .then((stream) => {
+            const track = stream.getVideoTracks()[0]
+            localParticipant.publishTrack(track)
+          })
+      } else if (input === 'screen') {
+        const screenTrack = navigator.mediaDevices
+          .getDisplayMedia({
+            video: true,
+            audio: true,
+          })
+          .then((stream) => {
+            const track = stream.getVideoTracks()[0]
+            localParticipant.publishTrack(track)
+          })
+      }
+    }
+  }, [input])
 
   function participantConnected(participant) {
     // Add participant to list
@@ -220,8 +266,29 @@ const ServerSidePage = ({ user }) => {
         />
         {connected && (
           <div className="flex flex-row items-center justify-center">
-            <button className="my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700">
-              <MicIcon />
+            <button
+              className={
+                muted
+                  ? 'my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700'
+                  : 'relative my-2 mx-4 rounded-full bg-red-600 p-3 text-white transition hover:bg-red-700'
+              }
+              onClick={() => {
+                setMuted(!muted)
+                const localParticipant = twilioRoom.localParticipant
+                const localTracks = Array.from(
+                  localParticipant.audioTracks.values()
+                )
+                localTracks.forEach((track) => {
+                  console.log(track.track)
+                  if (!muted) {
+                    track.track.disable()
+                  } else {
+                    track.track.enable()
+                  }
+                })
+              }}
+            >
+              <MicIcon muted={muted} />
             </button>
             <button
               className="my-2 mx-4 rounded-full bg-red-600 p-3 text-white hover:bg-red-700"
@@ -232,6 +299,23 @@ const ServerSidePage = ({ user }) => {
             <button className="my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700">
               <CameraIcon />
             </button>
+            {!isMobile && (
+              <button
+                className={
+                  'my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700'
+                }
+                onClick={() => {
+                  console.log(input)
+                  if (input === 'camera') {
+                    setInput('screen')
+                  } else {
+                    setInput('camera')
+                  }
+                }}
+              >
+                {input === 'camera' ? <ScreenIcon /> : <CameraIcon />}
+              </button>
+            )}
           </div>
         )}
       </aside>
@@ -253,6 +337,14 @@ function attachTrack(track, id) {
       // Force video size
       video.setAttribute('width', '100%')
       video.setAttribute('height', '100%')
+
+      // Keep last one video remove others
+      const videos = $videoContainer.querySelectorAll('video')
+      videos.forEach((e, index) => {
+        if (index !== videos.length - 1) {
+          e.remove()
+        }
+      })
     }
   } catch (error) {
     console.log('Failed to attach track: ', error)
@@ -279,40 +371,21 @@ async function connect(userId, roomId, setRoom, room, isCreator) {
   )
 }
 
-async function addLocalVideo(type) {
+async function addLocalVideo(type, room) {
   const $localVideo = document.getElementById('local-video')
 
-  if (type === 'camera') {
-    const localTracks = await Video.createLocalVideoTrack({
-      audio: {
-        name: 'microphone',
-      },
-      video: {
-        name: 'camera',
-        width: { ideal: 1920 },
-        height: { ideal: 1080 },
-      },
-    })
-
-    $localVideo.appendChild(localTracks.attach())
-  } else {
-    const localAudio = await Video.createLocalAudioTrack({
+  const localTracks = await Video.createLocalVideoTrack({
+    audio: {
       name: 'microphone',
-    })
+    },
+    video: {
+      name: 'camera',
+      width: { ideal: 1920 },
+      height: { ideal: 1080 },
+    },
+  })
 
-    const localVideo = await navigator.mediaDevices.getDisplayMedia({
-      video: {
-        cursor: 'always',
-      },
-    })
-
-    const localTracks = await Video.createLocalTracks({
-      audio: localAudio,
-      video: localVideo,
-    })
-
-    $localVideo.appendChild(localTracks.attach())
-  }
+  $localVideo.appendChild(localTracks.attach())
 
   // Get videos inside local video container
   const $videos = $localVideo.querySelectorAll('video')
@@ -341,7 +414,7 @@ export async function getServerSideProps(context) {
     context
   )
 
-  const user = nhostSession?.user
+  const user = nhostSession?.user || null
 
   return {
     props: {
@@ -349,6 +422,18 @@ export async function getServerSideProps(context) {
       user,
     },
   }
+}
+
+function checkDevice(userAgent) {
+  return (
+    userAgent.match(/Android/i) ||
+    userAgent.match(/webOS/i) ||
+    userAgent.match(/iPhone/i) ||
+    userAgent.match(/iPad/i) ||
+    userAgent.match(/iPod/i) ||
+    userAgent.match(/BlackBerry/i) ||
+    userAgent.match(/Windows Phone/i)
+  )
 }
 
 export default ServerSidePage
