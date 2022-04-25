@@ -63,7 +63,7 @@ export default function HomeLayout() {
                   type="submit"
                   className="z-0 inline-flex h-full w-full items-center justify-center rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
                 >
-                  Buscar
+                  Entrar
                 </motion.button>
               )}
             </AnimatePresence>

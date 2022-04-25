@@ -24,14 +24,16 @@ const Home = () => {
           <span className="text-gray-700">Clon</span>
           <span className="text-gray-500">Meet</span>
         </h1>
-        <button
-          className="absolute top-0 right-0 mx-4 rounded bg-red-500 py-2 px-4 font-bold text-white transition hover:bg-red-700"
-          onClick={() => {
-            nhost.auth.signOut()
-          }}
-        >
-          Cerrar sesión
-        </button>
+        {isAuthenticated && (
+          <button
+            className="absolute top-0 right-0 mx-4 rounded bg-red-500 py-2 px-4 font-bold text-white transition hover:bg-red-700"
+            onClick={() => {
+              nhost.auth.signOut()
+            }}
+          >
+            Cerrar sesión
+          </button>
+        )}
         {isAuthenticated ? <HomeLayout /> : <AuthPanel />}
       </main>
     </div>

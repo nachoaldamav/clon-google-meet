@@ -23,6 +23,7 @@ const ServerSidePage = ({ user }) => {
   const [time, setTime] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
   const [muted, setMuted] = useState(false)
+  const [hideCamera, setHideCamera] = useState(false)
   const [preflight, setPreflight] = useState(false)
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
@@ -296,8 +297,29 @@ const ServerSidePage = ({ user }) => {
             >
               <PhoneIcon />
             </button>
-            <button className="my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700">
-              <CameraIcon />
+            <button
+              className={
+                hideCamera
+                  ? 'my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700'
+                  : 'relative my-2 mx-4 rounded-full bg-red-600 p-3 text-white transition hover:bg-red-700'
+              }
+              onClick={() => {
+                setHideCamera(!hideCamera)
+                const localParticipant = twilioRoom.localParticipant
+                const localTracks = Array.from(
+                  localParticipant.videoTracks.values()
+                )
+                localTracks.forEach((track) => {
+                  console.log(track.track)
+                  if (!hideCamera) {
+                    track.track.disable()
+                  } else {
+                    track.track.enable()
+                  }
+                })
+              }}
+            >
+              <CameraIcon hidden={hideCamera} />
             </button>
             {!isMobile && (
               <button

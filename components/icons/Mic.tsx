@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-export default function MicIcon({ muted }: { muted: boolean }) {
+export default function MicIcon({ muted = true }: { muted: boolean }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
