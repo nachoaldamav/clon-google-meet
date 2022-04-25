@@ -127,7 +127,7 @@ const stepsComponents = [
     title: 'Comprobación de conexión',
     description: 'Ahora vamos a comprobar tu conexión a internet.',
     end: true,
-    Component: (setPermissions, currentStep, setToken, steps) => {
+    Component: (setPermissions, currentStep, setToken, steps, setPreflight) => {
       const [loading, setLoading] = useState(false)
       const [sent, setSent] = useState(false)
       const [error, setError] = useState(false)
@@ -180,10 +180,26 @@ const stepsComponents = [
               <h3 className="text-center text-sm font-bold">
                 {stepsLenght} / 7 test completados
               </h3>
-              {stepsLenght >= 7 && (
+              {stepsLenght >= 7 && !error && (
                 <h4 className="text-center text-sm font-bold text-green-500">
                   ¡Todo listo!
                 </h4>
+              )}
+              {error && (
+                <>
+                  <h4 className="text-center text-sm font-bold text-red-500">
+                    Ha ocurrido un error, inténtalo de nuevo
+                  </h4>
+                  <button
+                    className="my-2 mx-4 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-blue-600 px-2 py-1 font-bold text-white hover:bg-blue-700"
+                    onClick={() => {
+                      setPreflight(true)
+                      window.localStorage.setItem('preflight', true)
+                    }}
+                  >
+                    Continuar igualmente
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -338,6 +354,7 @@ export default function PreflightCheck({ status, setPreflight }) {
                       currentStep={step}
                       setToken={setToken}
                       steps={steps}
+                      setPreflight={setPreflight}
                     />
                   </div>
                 </motion.div>
@@ -350,14 +367,22 @@ export default function PreflightCheck({ status, setPreflight }) {
   )
 }
 
-function RenderComponent({ id, setPermissions, currentStep, setToken, steps }) {
+function RenderComponent({
+  id,
+  setPermissions,
+  currentStep,
+  setToken,
+  steps,
+  setPreflight,
+}) {
   const step = stepsComponents.find((step) => step.id === id)
   return step.Component
     ? step.Component(
         setPermissions,
         (currentStep = currentStep),
         setToken,
-        steps
+        steps,
+        setPreflight
       )
     : null
 }

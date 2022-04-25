@@ -14,12 +14,11 @@ import * as Video from 'twilio-video'
 import getRoomData from '../../utils/getRoom'
 import PreflightCheck from '../../components/preflightCheck'
 
-const Peers = []
-
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
   const id = router.query.id
   const [time, setTime] = useState(0)
+  const [preflight, setPreflight] = useState(false)
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
   const [room, setRoom] = useState()
@@ -30,7 +29,8 @@ const ServerSidePage = ({ user }) => {
   const [participants, setParticipants] = useState([])
   const authenticated = useAuthenticated()
   const accessToken = useAccessToken()
-  const [preflight, setPreflight] = useState(false)
+
+  const [input, setInput] = useState('camera')
 
   useEffect(() => {
     if (!accessToken) {
@@ -146,7 +146,7 @@ const ServerSidePage = ({ user }) => {
 
   const handleConnect = async () => {
     setConnecting(true)
-    addLocalVideo()
+    addLocalVideo(input)
     await connect(user.id, id, setTwilioRoom, twilioRoom, isCreator).catch(
       (error) => {
         console.log('Failed to connect: ', error)
@@ -279,22 +279,44 @@ async function connect(userId, roomId, setRoom, room, isCreator) {
   )
 }
 
-async function addLocalVideo() {
+async function addLocalVideo(type) {
   const $localVideo = document.getElementById('local-video')
-  const localTracks = await Video.createLocalVideoTrack({
-    audio: {
+
+  if (type === 'camera') {
+    const localTracks = await Video.createLocalVideoTrack({
+      audio: {
+        name: 'microphone',
+      },
+      video: {
+        name: 'camera',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+      },
+    })
+
+    $localVideo.appendChild(localTracks.attach())
+  } else {
+    const localAudio = await Video.createLocalAudioTrack({
       name: 'microphone',
-    },
-    video: {
-      name: 'camera',
-      width: { ideal: 1920 },
-      height: { ideal: 1080 },
-    },
-  })
-  $localVideo.appendChild(localTracks.attach())
+    })
+
+    const localVideo = await navigator.mediaDevices.getDisplayMedia({
+      video: {
+        cursor: 'always',
+      },
+    })
+
+    const localTracks = await Video.createLocalTracks({
+      audio: localAudio,
+      video: localVideo,
+    })
+
+    $localVideo.appendChild(localTracks.attach())
+  }
 
   // Get videos inside local video container
   const $videos = $localVideo.querySelectorAll('video')
+
   // Remove all videos except the first one
   $videos.forEach((video) => {
     if (video !== $videos[0]) {
