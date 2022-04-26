@@ -16,6 +16,7 @@ import getRoomData from '../../utils/getRoom'
 import PreflightCheck from '../../components/preflightCheck'
 import detachTracks from '../../utils/detachTracks'
 import { stopTracks } from '../../utils/stopTracks'
+import nhost from '../../libs/nhost'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
@@ -79,9 +80,9 @@ const ServerSidePage = ({ user }) => {
         const seconds = Math.floor((diff % (1000 * 60)) / 1000)
 
         setTime(
-          `${hours < 9 ? '0' + hours : hours}:${
-            minutes < 9 ? '0' + minutes : minutes
-          }:${seconds < 9 ? '0' + seconds : seconds}`
+          `${hours <= 9 ? '0' + hours : hours}:${
+            minutes <= 9 ? '0' + minutes : minutes
+          }:${seconds <= 9 ? '0' + seconds : seconds}`
         )
       }, 1000)
 
@@ -151,6 +152,9 @@ const ServerSidePage = ({ user }) => {
   }, [input])
 
   function participantConnected(participant) {
+    const joinSound = document.getElementById('join-sound')
+    joinSound.play()
+
     // Add participant to list
     const participantObject = {
       sid: participant.sid,
@@ -205,6 +209,8 @@ const ServerSidePage = ({ user }) => {
   }
 
   const handleDisconnect = () => {
+    // Remove all participants
+    setParticipants([])
     twilioRoom.disconnect()
     setConnected(false)
   }
@@ -213,6 +219,11 @@ const ServerSidePage = ({ user }) => {
 
   return (
     <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-neutral-800 text-white">
+      <audio
+        id="join-sound"
+        src="/sounds/join.mp3"
+        className="absolute hidden"
+      />
       {!preflight && <PreflightCheck setPreflight={setPreflight} />}
       <div
         className={`flex-0 grid h-screen max-h-screen w-4/5 grid-flow-col items-center justify-center rounded-lg px-2`}
@@ -232,18 +243,31 @@ const ServerSidePage = ({ user }) => {
             }}
           >
             <div className="video flex h-full max-h-full w-auto flex-col items-center justify-center self-center"></div>
-            <div className="absolute top-0 right-0 p-2">
-              <span>{participant.identity}</span>
+            <div className="absolute top-0 w-full rounded-lg bg-opacity-25 p-4 text-center">
+              <RenderName id={participant.identity} />
             </div>
           </div>
         ))}
       </div>
-      <aside className="relative flex h-full w-full flex-1 flex-col justify-end bg-gray-50">
+      <aside className="relative flex h-full w-96 flex-1 flex-col justify-end bg-gray-50">
         {connected && (
           <span className="absolute top-0 inline-flex w-full justify-center p-2 text-xl font-bold text-black">
             {time}
           </span>
         )}
+        <div className="mt-10 mb-4 flex h-full w-full flex-col items-center justify-start px-4">
+          <h3 className="w-full text-xl font-bold text-black">Participantes</h3>
+          <div className="flex max-h-full w-full flex-col items-start justify-start">
+            {participants.map((participant, index) => (
+              <div className="flex w-full flex-row" key={index}>
+                <RenderName
+                  id={participant.identity}
+                  className="w-full text-left text-lg text-black"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
         {!connected && (
           <button
             className="my-2 mx-4 rounded-lg border-2 bg-white px-2 py-1 text-black"
@@ -427,6 +451,40 @@ async function addLocalVideo(type, room) {
     'w-auto',
     'object-cover'
   )
+}
+
+function RenderName({ id, className }) {
+  const [loading, setLoading] = useState(true)
+  const [name, setName] = useState('')
+
+  useEffect(() => {
+    const getName = async () => {
+      const res = await nhost.graphql
+        .request(
+          `query {
+      user(id: "${id}") {
+        displayName
+      }
+    }`
+        )
+        .then((res) => {
+          console.log(res)
+          return res.data.user.displayName
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      setName(res)
+      setLoading(false)
+    }
+    getName()
+  }, [id])
+
+  if (loading) {
+    return '...'
+  }
+
+  return <span className={className}>{name}</span>
 }
 
 // SERVER SIDE RENDERING

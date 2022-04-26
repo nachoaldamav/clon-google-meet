@@ -12,6 +12,7 @@ export default function AuthPanel() {
   const [userData, setUserData] = useState({
     email: '',
     password: '',
+    nickname: '',
   })
 
   const handleLogin = async () => {
@@ -36,6 +37,9 @@ export default function AuthPanel() {
     const register = await nhost.auth.signUp({
       email: userData.email,
       password: userData.password,
+      options: {
+        displayName: userData.nickname,
+      },
     })
     console.log('register', register)
 
@@ -89,16 +93,34 @@ export default function AuthPanel() {
             className="rounded-full bg-gray-200 px-4 py-2 text-gray-800"
             type="email"
             placeholder="Email"
+            id="email"
             value={userData.email}
             onChange={(e) =>
               setUserData({ ...userData, email: e.target.value })
             }
           />
+          {formType === 'register' && (
+            <>
+              <label className="text-left text-gray-700">Nickname</label>
+              <input
+                className="rounded-full bg-gray-200 px-4 py-2 text-gray-800"
+                type="text"
+                placeholder="Nickname"
+                id="nickname"
+                maxLength={20}
+                value={userData.nickname}
+                onChange={(e) =>
+                  setUserData({ ...userData, nickname: e.target.value })
+                }
+              />
+            </>
+          )}
           <label className="text-left text-gray-700">Contraseña</label>
           <input
             className="rounded-full bg-gray-200 px-4 py-2 text-gray-800"
             type="password"
             placeholder="Password"
+            id="password"
             value={userData.password}
             onChange={(e) =>
               setUserData({ ...userData, password: e.target.value })
