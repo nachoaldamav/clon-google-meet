@@ -16,7 +16,6 @@ export default function ParticipantMute({ id }: { id: string }) {
     if (videoEl) {
       videoEl.muted = !muted
       setMuted(!muted)
-      console.log(videoEl.muted)
     }
   }
   return (
@@ -24,7 +23,7 @@ export default function ParticipantMute({ id }: { id: string }) {
       className="text-right text-xl text-gray-500 opacity-0 transition duration-150 group-hover:opacity-100"
       onClick={toggleMute}
     >
-      {muted ? <SoundIcon /> : <MuteIcon />}
+      {!muted ? <SoundIcon /> : <MuteIcon />}
     </button>
   )
 }

@@ -470,7 +470,6 @@ function RenderName({ id, className }) {
           }`
         )
         .then((res) => {
-          console.log(res)
           return res.data.user.displayName
         })
         .catch((err) => {
