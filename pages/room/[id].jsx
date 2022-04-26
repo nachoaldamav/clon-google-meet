@@ -5,11 +5,11 @@ import PhoneIcon from '../../components/icons/Phone'
 import MicIcon from '../../components/icons/Mic'
 import CameraIcon from '../../components/icons/Camera'
 import ScreenIcon from '../../components/icons/Screen'
+import ParticipantMute from '../../components/ParticipantMute'
 import {
   getNhostSession,
   useAccessToken,
   useAuthenticated,
-  useUserData,
 } from '@nhost/nextjs'
 import * as Video from 'twilio-video'
 import getRoomData from '../../utils/getRoom'
@@ -259,11 +259,12 @@ const ServerSidePage = ({ user }) => {
           <h3 className="w-full text-xl font-bold text-black">Participantes</h3>
           <div className="flex max-h-full w-full flex-col items-start justify-start">
             {participants.map((participant, index) => (
-              <div className="flex w-full flex-row" key={index}>
+              <div className="group flex w-full flex-row" key={index}>
                 <RenderName
                   id={participant.identity}
                   className="w-full text-left text-lg text-black"
                 />
+                <ParticipantMute id={participant.identity} />
               </div>
             ))}
           </div>
@@ -375,10 +376,8 @@ function attachTrack(track, id) {
     const $video = $videoContainer.querySelector('.video')
     $video.appendChild(track.attach())
 
-    // Get video element
     const video = $video.querySelector('video')
     if (video) {
-      // Add class to video element
       video.classList.add('inline-flex', 'items-center', 'justify-center')
       // Force video size
       video.setAttribute('width', '100%')
@@ -391,6 +390,11 @@ function attachTrack(track, id) {
           e.remove()
         }
       })
+
+      const audioEl = $videoContainer.querySelector('audio')
+      if (audioEl) {
+        audioEl.id = `video-${id}`
+      }
     }
   } catch (error) {
     console.log('Failed to attach track: ', error)
@@ -433,7 +437,6 @@ async function addLocalVideo(type, room) {
 
   $localVideo.appendChild(localTracks.attach())
 
-  // Get videos inside local video container
   const $videos = $localVideo.querySelectorAll('video')
 
   // Remove all videos except the first one
@@ -443,7 +446,6 @@ async function addLocalVideo(type, room) {
     }
   })
 
-  // Add classes to video
   $videos[0].classList.add(
     'rounded-lg',
     'shadow-lg',
@@ -462,10 +464,10 @@ function RenderName({ id, className }) {
       const res = await nhost.graphql
         .request(
           `query {
-      user(id: "${id}") {
-        displayName
-      }
-    }`
+            user(id: "${id}") {
+              displayName
+            }
+          }`
         )
         .then((res) => {
           console.log(res)
@@ -484,7 +486,7 @@ function RenderName({ id, className }) {
     return '...'
   }
 
-  return <span className={className}>{name}</span>
+  return <span className={className}>{name || 'Usuario anónimo'}</span>
 }
 
 // SERVER SIDE RENDERING
