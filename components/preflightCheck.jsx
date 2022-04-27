@@ -280,7 +280,7 @@ export default function PreflightCheck({ status, setPreflight }) {
 
   return (
     <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-row items-center justify-center bg-gray-400 bg-opacity-60 p-4 text-black">
-      <div className="relative my-10 h-full rounded-lg bg-white p-4 md:w-1/2">
+      <div className="relative my-10 h-full w-full rounded-lg bg-white p-4 md:w-1/2">
         <div className="h-full w-full">
           <div
             className="absolute top-0 left-0 mx-10 flex h-fit flex-col justify-evenly overflow-y-hidden"
