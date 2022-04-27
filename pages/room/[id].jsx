@@ -15,8 +15,10 @@ import * as Video from 'twilio-video'
 import getRoomData from '../../utils/getRoom'
 import PreflightCheck from '../../components/preflightCheck'
 import detachTracks from '../../utils/detachTracks'
+import parseAudioTracks from '../../utils/getAudioTracks'
 import { stopTracks } from '../../utils/stopTracks'
 import nhost from '../../libs/nhost'
+import setVolumeRing from '../../utils/setVolumeRing'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
@@ -34,6 +36,7 @@ const ServerSidePage = ({ user }) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
   const [participants, setParticipants] = useState([])
+  const [stats, setStats] = useState([])
   const authenticated = useAuthenticated()
   const accessToken = useAccessToken()
 
@@ -98,6 +101,16 @@ const ServerSidePage = ({ user }) => {
 
   useEffect(() => {
     if (twilioRoom) {
+      let interval
+      try {
+        interval = setInterval(() => {
+          setVolumeRing(twilioRoom, participants)
+        }, 1000)
+      } catch (error) {
+        console.log('error', error)
+        clearInterval(interval)
+      }
+
       const participantsMap = twilioRoom.participants.values()
       const participantsArray = Array.from(participantsMap)
 
@@ -110,6 +123,11 @@ const ServerSidePage = ({ user }) => {
       // Get participants
       twilioRoom.on('participantConnected', participantConnected)
       twilioRoom.on('participantDisconnected', participantDisconnected)
+
+      // Clear interval when disconnected
+      twilioRoom.on('disconnected', () => {
+        clearInterval(interval)
+      })
     }
   }, [twilioRoom])
 
@@ -159,6 +177,7 @@ const ServerSidePage = ({ user }) => {
     const participantObject = {
       sid: participant.sid,
       identity: participant.identity,
+      audioTracks: parseAudioTracks(participant),
     }
 
     participants.push(participantObject)
@@ -234,7 +253,7 @@ const ServerSidePage = ({ user }) => {
       >
         {participants.map((participant, index) => (
           <div
-            className="participant relative rounded-lg p-2"
+            className="participant relative rounded-lg border-2 border-transparent p-2"
             key={index}
             id={`participant-${participant.identity}`}
             style={{
@@ -378,7 +397,13 @@ function attachTrack(track, id) {
 
     const video = $video.querySelector('video')
     if (video) {
-      video.classList.add('inline-flex', 'items-center', 'justify-center')
+      video.classList.add(
+        'inline-flex',
+        'items-center',
+        'justify-center',
+        'border-2',
+        'border-transparent'
+      )
       // Force video size
       video.setAttribute('width', '100%')
       video.setAttribute('height', '100%')
