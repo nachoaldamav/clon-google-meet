@@ -47,7 +47,7 @@ const ServerSidePage = ({ user }) => {
 
   useEffect(() => {
     if (!accessToken) {
-      router.push('/')
+      router.push(`/?redirect=room/${id}`)
     }
 
     const isPhone = checkDevice(navigator.userAgent)
@@ -278,7 +278,6 @@ const ServerSidePage = ({ user }) => {
       <button
         className="visible absolute top-0 right-0 z-50 m-4 rounded border text-lg md:hidden"
         style={{
-          // Inverted color
           color: !asideOpen ? '#fff' : '#000',
         }}
         onClick={() => setAsideOpen(!asideOpen)}

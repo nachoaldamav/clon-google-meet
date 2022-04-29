@@ -28,7 +28,11 @@ export default function AuthPanel() {
     } else {
       setError('')
       setFormType('login')
-      router.push('/')
+      if (router.query.redirect) {
+        router.push('/' + router.query.redirect)
+      } else {
+        router.push('/')
+      }
     }
   }
 
