@@ -10,10 +10,17 @@ export default function setVolumeRing(twilioRoom, participants) {
             const participantEl = document.getElementById(
               `participant-${participant.identity}`
             )
-            const videoEl = participantEl.querySelector('video')
+            const videoEl = participantEl.querySelector('video').classList
+            const avatarEl = document.getElementById(
+              `avatar-${participant.identity}`
+            ).classList
             if (participantEl) {
-              videoEl.classList.add('border-green-500')
-              videoEl.classList.remove('border-transparent')
+              videoEl.add('camera-ring')
+              videoEl.remove('border-transparent')
+            }
+            if (avatarEl) {
+              avatarEl.add('camera-ring')
+              avatarEl.remove('border-transparent')
             }
           }
         } else {
@@ -21,10 +28,17 @@ export default function setVolumeRing(twilioRoom, participants) {
             const participantEl = document.getElementById(
               `participant-${participant.identity}`
             )
-            const videoEl = participantEl.querySelector('video')
+            const videoEl = participantEl.querySelector('video').classList
+            const avatarEl = document.getElementById(
+              `avatar-${participant.identity}`
+            ).classList
             if (participantEl) {
-              videoEl.classList.remove('border-green-500')
-              videoEl.classList.add('border-transparent')
+              videoEl.add('border-transparent')
+              videoEl.remove('camera-ring')
+            }
+            if (avatarEl) {
+              avatarEl.add('border-transparent')
+              avatarEl.remove('camera-ring')
             }
           }
         }

@@ -19,6 +19,8 @@ import parseAudioTracks from '../../utils/getAudioTracks'
 import { stopTracks } from '../../utils/stopTracks'
 import nhost from '../../libs/nhost'
 import setVolumeRing from '../../utils/setVolumeRing'
+import { useHotkeys } from 'react-hotkeys-hook'
+import Avatar from 'boring-avatars'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
@@ -36,7 +38,6 @@ const ServerSidePage = ({ user }) => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
   const [participants, setParticipants] = useState([])
-  const [stats, setStats] = useState([])
   const authenticated = useAuthenticated()
   const accessToken = useAccessToken()
 
@@ -234,6 +235,35 @@ const ServerSidePage = ({ user }) => {
     setConnected(false)
   }
 
+  const handleMute = () => {
+    if (twilioRoom) {
+      if (muted) {
+        setMuted(false)
+      } else {
+        setMuted(true)
+      }
+      const localParticipant = twilioRoom.localParticipant
+      const localTracks = Array.from(localParticipant.audioTracks.values())
+      localTracks.forEach((track) => {
+        console.log(track.track)
+        if (!muted) {
+          track.track.disable()
+        } else {
+          track.track.enable()
+        }
+      })
+    }
+  }
+
+  useHotkeys('ctrl+d', (e) => {
+    e.preventDefault()
+    try {
+      handleMute()
+    } catch (error) {
+      console.log('error', error)
+    }
+  })
+
   const shape = Math.ceil(Math.sqrt(participants.length))
 
   return (
@@ -278,7 +308,16 @@ const ServerSidePage = ({ user }) => {
           <h3 className="w-full text-xl font-bold text-black">Participantes</h3>
           <div className="flex max-h-full w-full flex-col items-start justify-start">
             {participants.map((participant, index) => (
-              <div className="group flex w-full flex-row" key={index}>
+              <div
+                className="group flex w-full flex-row items-center gap-2"
+                key={index}
+              >
+                <span
+                  className="inline-flex items-center justify-center rounded-full border-2"
+                  id={`avatar-${participant.identity}`}
+                >
+                  <Avatar name={participant.identity} />
+                </span>
                 <RenderName
                   id={participant.identity}
                   className="w-full text-left text-lg text-black"
@@ -318,19 +357,7 @@ const ServerSidePage = ({ user }) => {
                   : 'relative my-2 mx-4 rounded-full bg-red-600 p-3 text-white transition hover:bg-red-700'
               }
               onClick={() => {
-                setMuted(!muted)
-                const localParticipant = twilioRoom.localParticipant
-                const localTracks = Array.from(
-                  localParticipant.audioTracks.values()
-                )
-                localTracks.forEach((track) => {
-                  console.log(track.track)
-                  if (!muted) {
-                    track.track.disable()
-                  } else {
-                    track.track.enable()
-                  }
-                })
+                handleMute()
               }}
             >
               <MicIcon muted={muted} />
@@ -498,6 +525,7 @@ function RenderName({ id, className }) {
           return res.data.user.displayName
         })
         .catch((err) => {
+          console.log("Error getting user's name: ", id)
           console.log(err)
         })
       setName(res)
