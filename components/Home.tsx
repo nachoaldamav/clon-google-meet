@@ -22,7 +22,6 @@ export default function HomeLayout() {
         setRoomId(clipboard)
       } else {
         setRoomId(null)
-        console.log('Invalid room id', clipboard)
       }
     }
 
@@ -34,26 +33,26 @@ export default function HomeLayout() {
   }, [])
 
   return (
-    <div className="flex h-3/4 w-full flex-row justify-evenly">
-      <div className="flex w-1/2 flex-col items-start justify-center gap-4">
+    <div className="flex h-3/4 w-full flex-col justify-evenly md:flex-row">
+      <div className="flex w-full flex-col items-start justify-center gap-4 md:w-1/2">
         <h1 className="text-3xl font-bold">Videollamadas premium</h1>
         <p className="">Conecta con tus amigos y comparte tu vídeo llamada</p>
         <form
-          className="flex w-full flex-row items-center justify-start gap-4 md:w-4/5"
+          className="flex w-full flex-col items-center justify-start gap-4 md:w-4/5 md:flex-row"
           onSubmit={(e) => {
             e.preventDefault()
             router.push(`/room/${roomId}`)
           }}
         >
           <input
-            className="flex-0 relative z-10 w-3/5 rounded-md"
+            className="flex-0 relative z-10 w-full rounded-md md:w-3/5"
             type="text"
             value={roomId}
             placeholder="ID de la sala"
             onChange={(e) => setRoomId(e.target.value)}
           ></input>
 
-          <div className="inline-flex h-full w-2/5 flex-1 gap-2 text-sm">
+          <div className="inline-flex h-full w-full flex-1 gap-2 text-sm md:w-2/5">
             <AnimatePresence>
               {roomId && (
                 <motion.button
@@ -81,7 +80,7 @@ export default function HomeLayout() {
         </form>
       </div>
       <div
-        className="flex h-full w-1/2 flex-col items-center justify-center"
+        className="flex h-full w-full flex-col items-center justify-center md:w-1/2"
         style={{
           backgroundImage: `url("/images/team.png")`,
           backgroundSize: 'contain',

@@ -9,7 +9,7 @@ video {
 }
 
 .camera-ring {
-  @apply bg-green-600;
+  @apply border-green-600;
 }
 
 @tailwind utilities;

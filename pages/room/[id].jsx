@@ -5,6 +5,7 @@ import PhoneIcon from '../../components/icons/Phone'
 import MicIcon from '../../components/icons/Mic'
 import CameraIcon from '../../components/icons/Camera'
 import ScreenIcon from '../../components/icons/Screen'
+import MenuIcon from '../../components/icons/Menu'
 import ParticipantMute from '../../components/ParticipantMute'
 import {
   getNhostSession,
@@ -27,6 +28,7 @@ const ServerSidePage = ({ user }) => {
   const id = router.query.id
   const [time, setTime] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
+  const [asideOpen, setAsideOpen] = useState(false)
   const [muted, setMuted] = useState(false)
   const [hideCamera, setHideCamera] = useState(false)
   const [preflight, setPreflight] = useState(false)
@@ -273,6 +275,16 @@ const ServerSidePage = ({ user }) => {
         src="/sounds/join.mp3"
         className="absolute hidden"
       />
+      <button
+        className="visible absolute top-0 right-0 z-50 m-4 rounded border text-lg md:hidden"
+        style={{
+          // Inverted color
+          color: !asideOpen ? '#fff' : '#000',
+        }}
+        onClick={() => setAsideOpen(!asideOpen)}
+      >
+        <MenuIcon />
+      </button>
       {!preflight && <PreflightCheck setPreflight={setPreflight} />}
       <div
         className={`flex-0 grid h-screen max-h-screen w-4/5 grid-flow-col items-center justify-center rounded-lg px-2`}
@@ -283,7 +295,7 @@ const ServerSidePage = ({ user }) => {
       >
         {participants.map((participant, index) => (
           <div
-            className="participant relative rounded-lg border-2 border-transparent p-2"
+            className="participant relative flex items-center justify-center rounded-lg border-2 border-transparent p-2"
             key={index}
             id={`participant-${participant.identity}`}
             style={{
@@ -298,13 +310,19 @@ const ServerSidePage = ({ user }) => {
           </div>
         ))}
       </div>
-      <aside className="relative flex h-full w-96 flex-1 flex-col justify-end bg-gray-50">
+      <aside
+        className={
+          asideOpen
+            ? 'relative flex h-full w-96 flex-1 flex-col justify-end bg-gray-50'
+            : 'relative hidden h-full w-96 flex-1 flex-col justify-end bg-gray-50 md:flex'
+        }
+      >
         {connected && (
           <span className="absolute top-0 inline-flex w-full justify-center p-2 text-xl font-bold text-black">
             {time}
           </span>
         )}
-        <div className="mt-10 mb-4 flex h-full w-full flex-col items-center justify-start px-4">
+        <div className="flex h-screen max-h-screen w-full flex-col items-center justify-start px-4 md:mb-4 md:mt-10">
           <h3 className="w-full text-xl font-bold text-black">Participantes</h3>
           <div className="flex max-h-full w-full flex-col items-start justify-start">
             {participants.map((participant, index) => (
@@ -313,7 +331,7 @@ const ServerSidePage = ({ user }) => {
                 key={index}
               >
                 <span
-                  className="inline-flex items-center justify-center rounded-full border-2"
+                  className="inline-flex items-center justify-center rounded-full border-[3px]"
                   id={`avatar-${participant.identity}`}
                 >
                   <Avatar name={participant.identity} />
@@ -522,6 +540,7 @@ function RenderName({ id, className }) {
           }`
         )
         .then((res) => {
+          console.log(res)
           return res.data.user.displayName
         })
         .catch((err) => {
