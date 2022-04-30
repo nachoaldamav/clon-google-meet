@@ -530,23 +530,11 @@ function RenderName({ id, className }) {
 
   useEffect(() => {
     const getName = async () => {
-      const res = await nhost.graphql
-        .request(
-          `query {
-            user(id: "${id}") {
-              displayName
-            }
-          }`
-        )
-        .then((res) => {
-          console.log(res)
-          return res.data.user.displayName
-        })
-        .catch((err) => {
-          console.log("Error getting user's name: ", id)
-          console.log(err)
-        })
-      setName(res)
+      const res = await fetch(
+        `https://ggtmuhdidjxsglsqyfga.nhost.run/api/rest/get-user/${id}`
+      ).then((res) => res.json())
+      console.log(res)
+      setName(res.user.displayName)
       setLoading(false)
     }
     getName()
