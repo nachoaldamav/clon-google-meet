@@ -21,7 +21,7 @@ import { stopTracks } from '../../utils/stopTracks'
 import nhost from '../../libs/nhost'
 import setVolumeRing from '../../utils/setVolumeRing'
 import { useHotkeys } from 'react-hotkeys-hook'
-import Avatar from 'boring-avatars'
+import Avatar from '../../components/avatar'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
