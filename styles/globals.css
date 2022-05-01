@@ -12,4 +12,26 @@ video {
   @apply border-green-600;
 }
 
+.container-noHero {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+}
+
+.container-Hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    'hero hero .'
+    'hero hero .'
+    '. . .';
+}
+
+.hero {
+  grid-area: hero;
+}
+
 @tailwind utilities;

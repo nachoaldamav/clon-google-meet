@@ -36,6 +36,7 @@ const ServerSidePage = ({ user }) => {
   const [connecting, setConnecting] = useState(false)
   const [room, setRoom] = useState()
   const [isCreator, setIsCreator] = useState(false)
+  const [hero, setHero] = useState(false)
   const [twilioRoom, setTwilioRoom] = useState()
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -266,7 +267,7 @@ const ServerSidePage = ({ user }) => {
     }
   })
 
-  const shape = Math.ceil(Math.sqrt(participants.length))
+  const shape = Math.sqrt(participants.length)
 
   return (
     <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-neutral-800 text-white">
@@ -287,19 +288,56 @@ const ServerSidePage = ({ user }) => {
       {!preflight && <PreflightCheck setPreflight={setPreflight} />}
       <div
         className={`flex-0 grid h-screen max-h-screen w-4/5 grid-flow-col items-center justify-center rounded-lg px-2`}
-        style={{
-          gridTemplateColumns: `repeat(${shape}, minmax(0, 1fr))`,
-          gridTemplateRows: `repeat(${shape}, minmax(0, 1fr))`,
-        }}
+        style={
+          !hero
+            ? {
+                gridTemplateColumns: `repeat(${Math.ceil(shape)}, 1fr)`,
+                gridTemplateRows: `repeat(${Math.round(
+                  shape
+                )}, minmax(0, 1fr))`,
+                gap: '0.5rem',
+                gridAutoRows: '1fr',
+                height: '100%',
+              }
+            : {
+                gridTemplateColumns: `repeat(${Math.ceil(
+                  shape
+                )}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${Math.round(
+                  shape
+                )}, minmax(0, 1fr))`,
+                gap: '0.1rem',
+                gridAutoRows: '1fr',
+                height: '100%',
+              }
+        }
       >
         {participants.map((participant, index) => (
           <div
-            className="participant relative flex items-center justify-center rounded-lg border-2 border-transparent p-2"
+            className="participant relative flex cursor-pointer items-center justify-center rounded-lg border-2 border-transparent p-2"
             key={index}
             id={`participant-${participant.identity}`}
-            style={{
-              width: '100%',
-              height: '100%',
+            style={
+              hero && `participant-${participant.identity}` === hero
+                ? {
+                    gridColumnStart: 1,
+                    gridColumnEnd: `${Math.ceil(shape - 1)}`,
+                    gridRowStart: 1,
+                    gridRowEnd: `${Math.ceil(shape - 1)}`,
+                    height: '100%',
+                    width: '100%',
+                  }
+                : {
+                    height: '100%',
+                    width: '100%',
+                  }
+            }
+            onClick={() => {
+              if (hero !== `participant-${participant.identity}`) {
+                setHero(`participant-${participant.identity}`)
+              } else {
+                setHero(false)
+              }
             }}
           >
             <div className="video flex h-full max-h-full w-auto flex-col items-center justify-center self-center"></div>
