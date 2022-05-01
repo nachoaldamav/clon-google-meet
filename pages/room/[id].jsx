@@ -6,6 +6,8 @@ import MicIcon from '../../components/icons/Mic'
 import CameraIcon from '../../components/icons/Camera'
 import ScreenIcon from '../../components/icons/Screen'
 import MenuIcon from '../../components/icons/Menu'
+import ExpandIcon from '../../components/icons/Expand'
+import GridIcon from '../../components/icons/Grid'
 import ParticipantMute from '../../components/ParticipantMute'
 import {
   getNhostSession,
@@ -258,15 +260,6 @@ const ServerSidePage = ({ user }) => {
     }
   }
 
-  useHotkeys('ctrl+d', (e) => {
-    e.preventDefault()
-    try {
-      handleMute()
-    } catch (error) {
-      console.log('error', error)
-    }
-  })
-
   const shape = Math.sqrt(participants.length)
 
   return (
@@ -377,6 +370,21 @@ const ServerSidePage = ({ user }) => {
                   id={participant.identity}
                   className="w-full text-left text-lg text-black"
                 />
+                <button
+                  onClick={() => {
+                    if (hero === `participant-${participant.identity}`) {
+                      setHero(false)
+                    } else {
+                      setHero(`participant-${participant.identity}`)
+                    }
+                  }}
+                >
+                  {hero !== participant.identity ? (
+                    <ExpandIcon />
+                  ) : (
+                    <GridIcon />
+                  )}
+                </button>
                 <ParticipantMute id={participant.identity} />
               </div>
             ))}

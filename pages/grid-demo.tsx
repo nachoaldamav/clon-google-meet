@@ -13,8 +13,6 @@ export default function GridDemo() {
 
   const shape = Math.sqrt(participants.length)
 
-  console.log('hero', hero)
-
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-gray-900">
       <input
@@ -80,14 +78,4 @@ export default function GridDemo() {
       </div>
     </div>
   )
-}
-
-function createStyles(participants: number) {
-  const shape = Math.sqrt(participants)
-
-  return {
-    gridTemplateColumns: `repeat(${Math.ceil(shape)}, 1fr)`,
-    gridTemplateRows: `repeat(${Math.round(shape)}, 1fr)`,
-    gap: '0.5rem',
-  }
 }
