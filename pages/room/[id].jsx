@@ -261,9 +261,11 @@ const ServerSidePage = ({ user }) => {
   }
 
   const shape = Math.sqrt(participants.length)
+  console.log('hero', hero)
 
   return (
-    <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-neutral-800 text-white">
+    <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-[#13111c] text-white">
+      <span className="pattern-dots absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center opacity-5 pattern-bg-transparent pattern-white pattern-size-4" />
       <audio
         id="join-sound"
         src="/sounds/join.mp3"
@@ -343,49 +345,54 @@ const ServerSidePage = ({ user }) => {
       <aside
         className={
           asideOpen
-            ? 'relative flex h-full w-96 flex-1 flex-col justify-end bg-gray-50'
-            : 'relative hidden h-full w-96 flex-1 flex-col justify-end bg-gray-50 md:flex'
+            ? 'relative flex h-full w-96 flex-1 flex-col justify-end rounded-l-lg border-2 border-[#2e2b3b] bg-[#181622] text-white'
+            : 'relative hidden h-[95%] w-96 flex-1 flex-col justify-end rounded-l-lg border-2 border-[#2e2b3b] bg-[#181622] text-white md:flex'
         }
       >
         {connected && (
-          <span className="absolute top-0 inline-flex w-full justify-center p-2 text-xl font-bold text-black">
+          <span className="absolute top-0 inline-flex w-full justify-center p-2 text-xl font-bold text-white">
             {time}
           </span>
         )}
-        <div className="flex h-screen max-h-screen w-full flex-col items-center justify-start px-4 md:mb-4 md:mt-10">
-          <h3 className="w-full text-xl font-bold text-black">Participantes</h3>
-          <div className="flex max-h-full w-full flex-col items-start justify-start">
+        <div className="hidden h-screen max-h-screen w-full flex-col items-center justify-start px-4 md:mb-4 md:mt-10 lg:flex ">
+          <h3 className="w-full text-xl font-bold text-white">Participantes</h3>
+          <div className="flex max-h-full w-full flex-col items-start justify-start ">
             {participants.map((participant, index) => (
               <div
-                className="group flex w-full flex-row items-center gap-2"
+                className="group flex w-full flex-row items-center justify-between gap-2"
                 key={index}
               >
-                <span
-                  className="inline-flex items-center justify-center rounded-full border-[3px]"
-                  id={`avatar-${participant.identity}`}
-                >
-                  <Avatar name={participant.identity} />
-                </span>
-                <RenderName
-                  id={participant.identity}
-                  className="w-full text-left text-lg text-black"
-                />
-                <button
-                  onClick={() => {
-                    if (hero === `participant-${participant.identity}`) {
-                      setHero(false)
-                    } else {
-                      setHero(`participant-${participant.identity}`)
-                    }
-                  }}
-                >
-                  {hero !== participant.identity ? (
-                    <ExpandIcon />
-                  ) : (
-                    <GridIcon />
-                  )}
-                </button>
-                <ParticipantMute id={participant.identity} />
+                <div className="inline-flex items-center justify-start gap-2">
+                  <span
+                    className="inline-flex items-center justify-center rounded-full border-[3px]"
+                    id={`avatar-${participant.identity}`}
+                  >
+                    <Avatar name={participant.identity} />
+                  </span>
+                  <RenderName
+                    id={participant.identity}
+                    className="max-w-[10rem] truncate text-left text-lg text-white"
+                  />
+                </div>
+                <div className="inline-flex items-center justify-start gap-2">
+                  <button
+                    className="text-right text-xl text-gray-500 opacity-0 transition duration-150 group-hover:opacity-100"
+                    onClick={() => {
+                      if (hero === `participant-${participant.identity}`) {
+                        setHero(false)
+                      } else {
+                        setHero(`participant-${participant.identity}`)
+                      }
+                    }}
+                  >
+                    {hero !== participant.identity ? (
+                      <ExpandIcon />
+                    ) : (
+                      <GridIcon />
+                    )}
+                  </button>
+                  <ParticipantMute id={participant.identity} />
+                </div>
               </div>
             ))}
           </div>
@@ -491,8 +498,7 @@ function attachTrack(track, id) {
         'inline-flex',
         'items-center',
         'justify-center',
-        'border-2',
-        'border-transparent'
+        'border-2'
       )
       // Force video size
       video.setAttribute('width', '100%')

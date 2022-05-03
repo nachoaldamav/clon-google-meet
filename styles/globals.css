@@ -9,7 +9,11 @@ video {
 }
 
 .camera-ring {
-  @apply border-green-600;
+  @apply border-[#7c2dca];
+}
+
+.camera-ring-off {
+  @apply border-[#4c485d];
 }
 
 .container-noHero {

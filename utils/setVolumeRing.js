@@ -16,7 +16,7 @@ export default function setVolumeRing(twilioRoom, participants) {
             ).classList
             if (participantEl) {
               videoEl.add('camera-ring')
-              videoEl.remove('border-transparent')
+              videoEl.remove('camera-ring-off')
             }
             if (avatarEl) {
               avatarEl.add('camera-ring')
@@ -33,7 +33,7 @@ export default function setVolumeRing(twilioRoom, participants) {
               `avatar-${participant.identity}`
             ).classList
             if (participantEl) {
-              videoEl.add('border-transparent')
+              videoEl.add('camera-ring-off')
               videoEl.remove('camera-ring')
             }
             if (avatarEl) {
