@@ -24,6 +24,10 @@ video {
   @apply bg-[#13111c];
 }
 
+.main-input {
+  @apply rounded-xl bg-secondary px-4 py-2 text-gray-400 autofill:!bg-secondary;
+}
+
 .container-noHero {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

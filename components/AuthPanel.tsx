@@ -62,8 +62,8 @@ export default function AuthPanel() {
         <button
           className={
             formType === 'login'
-              ? 'rounded-xl bg-blue-700 py-2 px-4 font-bold text-white hover:bg-blue-400'
-              : 'rounded-xl bg-gray-200 py-2 px-4 font-bold text-gray-900 hover:bg-gray-300'
+              ? 'rounded-xl border-2 border-white bg-primary py-2 px-4 font-bold text-gray-200 hover:bg-secondary'
+              : 'rounded-xl border-2 border-[#2e2b3b] bg-primary py-2 px-4 font-bold text-gray-200 hover:border-gray-500 hover:bg-secondary'
           }
           onClick={() => setFormType('login')}
         >
@@ -72,8 +72,8 @@ export default function AuthPanel() {
         <button
           className={
             formType === 'register'
-              ? 'rounded-xl bg-blue-700 py-2 px-4 font-bold text-white hover:bg-blue-400'
-              : 'rounded-xl bg-gray-200 py-2 px-4 font-bold text-gray-900 hover:bg-gray-300'
+              ? 'rounded-xl border-2 border-white bg-primary py-2 px-4 font-bold text-gray-200 hover:bg-secondary'
+              : 'rounded-xl border-2 border-[#2e2b3b] bg-primary py-2 px-4 font-bold text-gray-200 hover:border-gray-500 hover:bg-secondary'
           }
           onClick={() => setFormType('register')}
         >
@@ -94,7 +94,7 @@ export default function AuthPanel() {
         >
           <label className="text-left text-gray-500">Correo electrónico</label>
           <input
-            className="rounded-xl bg-gray-200 px-4 py-2 text-gray-600"
+            className="main-input"
             type="email"
             placeholder="Email"
             id="email"
@@ -107,7 +107,7 @@ export default function AuthPanel() {
             <>
               <label className="text-left text-gray-500">Nickname</label>
               <input
-                className="rounded-xl bg-gray-200 px-4 py-2 text-gray-600"
+                className="main-input"
                 type="text"
                 placeholder="Nickname"
                 id="nickname"
@@ -121,7 +121,7 @@ export default function AuthPanel() {
           )}
           <label className="text-left text-gray-500">Contraseña</label>
           <input
-            className="rounded-xl bg-gray-200 px-4 py-2 text-gray-600"
+            className="main-input"
             type="password"
             placeholder="Password"
             id="password"

@@ -49,7 +49,7 @@ export default function HomeLayout() {
           }}
         >
           <input
-            className="flex-0 relative z-10 w-full rounded-md md:w-3/5"
+            className="flex-0 main-input relative z-10 w-full md:w-3/5"
             type="text"
             value={roomId}
             placeholder="ID de la sala"
