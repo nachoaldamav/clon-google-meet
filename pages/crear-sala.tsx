@@ -28,7 +28,7 @@ export default function CrearSala() {
   }, [user, router])
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-2">
+    <div className="flex h-screen flex-col items-center justify-center gap-2 bg-primary text-white">
       {!error ? (
         <h1 className="inline-flex items-center justify-center gap-2 text-2xl font-bold">
           <LoadingIcon />
