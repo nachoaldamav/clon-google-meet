@@ -6,37 +6,6 @@ import { motion } from 'framer-motion'
 import MicIcon from './icons/Mic'
 import AudioTest from './audio'
 
-const stepList = [
-  {
-    id: 'mediaAcquired',
-    title: 'Conexión de medios',
-  },
-  {
-    id: 'connected',
-    title: 'Conectado',
-  },
-  {
-    id: 'mediaSubscribed',
-    title: 'Subscripción de medios',
-  },
-  {
-    id: 'mediaStarted',
-    title: 'Inicio de cámara',
-  },
-  {
-    id: 'dtlsConnected',
-    title: 'Conexión DTLS',
-  },
-  {
-    id: 'peerConnectionConnected',
-    title: 'Conexión Peer a Peer',
-  },
-  {
-    id: 'iceConnected',
-    title: 'Conexión al servidor ICE',
-  },
-]
-
 const stepsComponents = [
   {
     id: 1,
@@ -47,7 +16,7 @@ const stepsComponents = [
       return (
         <div className="flex h-full w-full flex-col">
           <img
-            src="/images/hangout.png"
+            src="/images/hangout.svg"
             alt="Hangout"
             className="mx-auto my-4 w-64"
           />
@@ -94,7 +63,7 @@ const stepsComponents = [
       }, [currentStep])
 
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-white py-4 shadow">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg border border-[#2e2b3b] bg-secondary py-4 shadow">
           <h3 className="text-center text-sm font-bold">Previsualización</h3>
           <video
             className="h-auto w-2/3 rounded"
@@ -114,7 +83,7 @@ const stepsComponents = [
     Component: (setPermissions, currentStep) => {
       return (
         <div
-          className=" mr-2 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-white py-4 shadow-md"
+          className=" mr-2 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-secondary py-4 shadow-md"
           style={{}}
         >
           <AudioTest />
@@ -138,7 +107,7 @@ const stepsComponents = [
       }, [steps])
 
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg border bg-white py-4">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg border border-[#2e2b3b] bg-secondary py-4">
           {!sent && (
             <button
               className="my-2 mx-4 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-blue-600 px-2 py-1 font-bold text-white hover:bg-blue-700"
@@ -279,8 +248,8 @@ export default function PreflightCheck({ status, setPreflight }) {
   }, [permissions])
 
   return (
-    <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-row items-center justify-center bg-gray-400 bg-opacity-60 p-4 text-black">
-      <div className="relative my-10 h-full w-full rounded-lg bg-white p-4 md:w-1/2">
+    <div className="absolute top-0 left-0 z-50 flex h-full w-full flex-row items-center justify-center bg-gray-400 bg-opacity-60 p-4 text-white">
+      <div className="relative my-10 h-full w-full rounded-lg bg-primary p-4 md:w-1/2">
         <div className="h-full w-full">
           <div
             className="absolute top-0 left-0 mx-10 flex h-fit flex-col justify-evenly overflow-y-hidden"

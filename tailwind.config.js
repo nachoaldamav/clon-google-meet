@@ -8,6 +8,12 @@ module.exports = {
     fontFamily: {
       display: ['Inter', 'sans-serif'],
     },
+    extend: {
+      colors: {
+        primary: '#181622',
+        secondary: '#13111c',
+      },
+    },
   },
   plugins: [require('@tailwindcss/forms'), require('tailwindcss-bg-patterns')],
 }

@@ -16,6 +16,14 @@ video {
   @apply border-[#4c485d];
 }
 
+.bg-primary {
+  @apply bg-[#181622];
+}
+
+.bg-secondary {
+  @apply bg-[#13111c];
+}
+
 .container-noHero {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

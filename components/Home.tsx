@@ -35,8 +35,12 @@ export default function HomeLayout() {
   return (
     <div className="flex h-3/4 w-full flex-col justify-evenly md:flex-row">
       <div className="flex w-full flex-col items-start justify-center gap-4 md:w-1/2">
-        <h1 className="text-3xl font-bold">Videollamadas premium</h1>
-        <p className="">Conecta con tus amigos y comparte tu vídeo llamada</p>
+        <h1 className="text-3xl font-bold text-gray-200">
+          Videollamadas premium
+        </h1>
+        <p className="text-gray-400">
+          Conecta con tus amigos y comparte tu vídeo llamada
+        </p>
         <form
           className="flex w-full flex-col items-center justify-start gap-4 md:w-4/5 md:flex-row"
           onSubmit={(e) => {
@@ -82,8 +86,8 @@ export default function HomeLayout() {
       <div
         className="flex h-full w-full flex-col items-center justify-center md:w-1/2"
         style={{
-          backgroundImage: `url("/images/team.png")`,
-          backgroundSize: 'contain',
+          backgroundImage: `url("/images/group.svg")`,
+          backgroundSize: '75%',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}

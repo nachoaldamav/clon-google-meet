@@ -40,7 +40,7 @@ export default function AudioTest() {
   return (
     <div className="inline-flex w-full items-center gap-2 px-2">
       <MicIcon muted={true} />
-      <span className="relative h-1 w-full rounded bg-gray-200">
+      <span className="relative h-1 w-full rounded bg-primary">
         <motion.span
           className="absolute top-0 left-0 h-full rounded bg-green-400"
           animate={{

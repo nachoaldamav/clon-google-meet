@@ -19,7 +19,7 @@ const Home = () => {
   }, [isAuthenticated])
 
   return (
-    <div className="flex h-screen min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex h-screen min-h-screen flex-col items-center justify-center bg-primary py-2">
       <Head>
         <title>Clon Meet</title>
         <link rel="icon" href="/favicon.ico" />

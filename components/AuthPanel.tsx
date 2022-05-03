@@ -62,8 +62,8 @@ export default function AuthPanel() {
         <button
           className={
             formType === 'login'
-              ? 'rounded-full bg-blue-700 py-2 px-4 font-bold text-white hover:bg-blue-400'
-              : 'rounded-full bg-gray-200 py-2 px-4 font-bold text-gray-800 hover:bg-gray-300'
+              ? 'rounded-xl bg-blue-700 py-2 px-4 font-bold text-white hover:bg-blue-400'
+              : 'rounded-xl bg-gray-200 py-2 px-4 font-bold text-gray-900 hover:bg-gray-300'
           }
           onClick={() => setFormType('login')}
         >
@@ -72,8 +72,8 @@ export default function AuthPanel() {
         <button
           className={
             formType === 'register'
-              ? 'rounded-full bg-blue-700 py-2 px-4 font-bold text-white hover:bg-blue-400'
-              : 'rounded-full bg-gray-200 py-2 px-4 font-bold text-gray-800 hover:bg-gray-300'
+              ? 'rounded-xl bg-blue-700 py-2 px-4 font-bold text-white hover:bg-blue-400'
+              : 'rounded-xl bg-gray-200 py-2 px-4 font-bold text-gray-900 hover:bg-gray-300'
           }
           onClick={() => setFormType('register')}
         >
@@ -92,9 +92,9 @@ export default function AuthPanel() {
             }
           }}
         >
-          <label className="text-left text-gray-700">Correo electrónico</label>
+          <label className="text-left text-gray-500">Correo electrónico</label>
           <input
-            className="rounded-full bg-gray-200 px-4 py-2 text-gray-800"
+            className="rounded-xl bg-gray-200 px-4 py-2 text-gray-600"
             type="email"
             placeholder="Email"
             id="email"
@@ -105,9 +105,9 @@ export default function AuthPanel() {
           />
           {formType === 'register' && (
             <>
-              <label className="text-left text-gray-700">Nickname</label>
+              <label className="text-left text-gray-500">Nickname</label>
               <input
-                className="rounded-full bg-gray-200 px-4 py-2 text-gray-800"
+                className="rounded-xl bg-gray-200 px-4 py-2 text-gray-600"
                 type="text"
                 placeholder="Nickname"
                 id="nickname"
@@ -119,9 +119,9 @@ export default function AuthPanel() {
               />
             </>
           )}
-          <label className="text-left text-gray-700">Contraseña</label>
+          <label className="text-left text-gray-500">Contraseña</label>
           <input
-            className="rounded-full bg-gray-200 px-4 py-2 text-gray-800"
+            className="rounded-xl bg-gray-200 px-4 py-2 text-gray-600"
             type="password"
             placeholder="Password"
             id="password"
@@ -132,7 +132,7 @@ export default function AuthPanel() {
           />
           {!loading && (
             <button
-              className="rounded-full bg-gray-200 py-2 px-4 font-bold text-gray-800 hover:bg-gray-300"
+              className="rounded-xl bg-gray-200 py-2 px-4 font-bold text-gray-900 hover:bg-gray-300"
               type="submit"
             >
               {formType === 'login' ? 'Iniciar sesión' : 'Registrarse'}
@@ -140,7 +140,7 @@ export default function AuthPanel() {
           )}
           {loading && (
             <button
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gray-200 py-2 px-4 font-bold text-gray-800 hover:bg-gray-300"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gray-200 py-2 px-4 font-bold text-gray-900 hover:bg-gray-300"
               disabled
             >
               <LoadingIcon /> Enviando...
