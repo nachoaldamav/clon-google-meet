@@ -3,6 +3,10 @@ import LoadingIcon from './icons/Loading'
 import { useAccessToken, useAuthenticated, useUserData } from '@nhost/nextjs'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import LoginButton from './LoginButton'
+import GoogleIcon from './icons/Google'
+import DiscordIcon from './icons/Discord'
+import GithubIcon from './icons/Github'
 
 export default function AuthPanel() {
   const router = useRouter()
@@ -148,7 +152,54 @@ export default function AuthPanel() {
           )}
         </form>
       </div>
-      {error && <p className="text-sm text-red-500">{error.message}</p>}
+      {error && <p className="my-2 text-sm text-red-500">{error.message}</p>}
+      <div className="flex w-full flex-col items-center justify-center gap-2 border-t border-t-white">
+        <p className="mt-4 text-sm text-gray-100">
+          También puedes iniciar sesión con
+        </p>
+        <div className="flex flex-row items-center justify-center gap-2">
+          <LoginButton
+            onClick={async () => {
+              setLoading(true)
+              nhost.auth
+                .signIn({
+                  provider: 'google',
+                })
+                .then((login) => {
+                  console.log('login', login)
+                  if (login.error) {
+                    setError(login.error)
+                  } else {
+                    setError('')
+                  }
+                  setLoading(false)
+                })
+            }}
+          >
+            <GoogleIcon />
+          </LoginButton>
+          <LoginButton
+            onClick={async () => {
+              setLoading(true)
+              nhost.auth
+                .signIn({
+                  provider: 'github',
+                })
+                .then((login) => {
+                  console.log('login', login)
+                  if (login.error) {
+                    setError(login.error)
+                  } else {
+                    setError('')
+                  }
+                  setLoading(false)
+                })
+            }}
+          >
+            <GithubIcon />
+          </LoginButton>
+        </div>
+      </div>
     </div>
   )
 }
