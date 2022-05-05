@@ -25,7 +25,7 @@ export default function CrearSala() {
           setError(true)
         })
     }
-  }, [user, router])
+  }, [user, router, isAuthenticated])
 
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-2 bg-primary text-white">

@@ -4,6 +4,14 @@ export default function attachTrack(track, id) {
     const $video = $videoContainer.querySelector('.video')
     $video.appendChild(track.attach())
 
+    // Keep last video remove others
+    const videos = $videoContainer.querySelectorAll('video')
+    videos.forEach((e, index) => {
+      if (index !== videos.length - 1) {
+        e.remove()
+      }
+    })
+
     const video = $video.querySelector('video')
     if (video) {
       video.classList.add(
@@ -16,14 +24,6 @@ export default function attachTrack(track, id) {
       // Force video size
       video.setAttribute('width', '100%')
       video.setAttribute('height', '100%')
-
-      // Keep last one video remove others
-      const videos = $videoContainer.querySelectorAll('video')
-      videos.forEach((e, index) => {
-        if (index !== videos.length - 1) {
-          e.remove()
-        }
-      })
 
       const audioEl = $videoContainer.querySelector('audio')
       if (audioEl) {

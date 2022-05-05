@@ -5,7 +5,7 @@
 
 @tailwind components;
 video {
-  @apply h-full w-auto rounded-lg object-cover shadow-lg;
+  @apply h-full w-auto rounded-lg shadow-lg;
 }
 
 .camera-ring {

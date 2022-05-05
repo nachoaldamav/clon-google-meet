@@ -9,7 +9,6 @@ export default function RenderName({ id, className }) {
       const res = await fetch(
         `https://ggtmuhdidjxsglsqyfga.nhost.run/api/rest/get-user/${id}`
       ).then((res) => res.json())
-      console.log(res)
       setName(res.user.displayName)
       setLoading(false)
     }

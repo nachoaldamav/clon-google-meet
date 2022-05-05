@@ -14,7 +14,6 @@ import {
   useAccessToken,
   useAuthenticated,
 } from '@nhost/nextjs'
-import * as Video from 'twilio-video'
 import getRoomData from '../../utils/getRoom'
 import PreflightCheck from '../../components/preflightCheck'
 import detachTracks from '../../utils/detachTracks'
@@ -73,7 +72,8 @@ const ServerSidePage = ({ user }) => {
       .catch((error) => {
         console.log('Failed loading room: ', error)
       })
-  }, [authenticated, router, id, user.id, accessToken])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated, router])
 
   useEffect(() => {
     if (room) {
@@ -127,6 +127,8 @@ const ServerSidePage = ({ user }) => {
       // Get participants
       twilioRoom.on('participantConnected', participantConnected)
       twilioRoom.on('participantDisconnected', participantDisconnected)
+
+      twilioRoom.on('trackDisabled', console.log)
 
       // Clear interval when disconnected
       twilioRoom.on('disconnected', () => {
@@ -340,7 +342,7 @@ const ServerSidePage = ({ user }) => {
                 </span>
               </span>
             </div>
-            <div className="absolute top-0 w-full rounded-lg bg-opacity-25 p-4 text-center">
+            <div className="absolute top-0 z-20 w-full rounded-lg bg-opacity-25 p-4 text-center">
               <RenderName id={participant.identity} />
             </div>
           </div>
