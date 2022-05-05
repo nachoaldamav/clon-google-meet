@@ -20,10 +20,13 @@ import PreflightCheck from '../../components/preflightCheck'
 import detachTracks from '../../utils/detachTracks'
 import parseAudioTracks from '../../utils/getAudioTracks'
 import { stopTracks } from '../../utils/stopTracks'
-import nhost from '../../libs/nhost'
 import setVolumeRing from '../../utils/setVolumeRing'
-import { useHotkeys } from 'react-hotkeys-hook'
 import Avatar from '../../components/avatar'
+import attachTrack from '../../utils/attachTrack'
+import { connect } from '../../utils/connect'
+import addLocalVideo from '../../utils/addLocalVideo'
+import RenderName from '../../utils/renderName'
+import checkDevice from '../../utils/checkDevice'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
@@ -40,8 +43,6 @@ const ServerSidePage = ({ user }) => {
   const [isCreator, setIsCreator] = useState(false)
   const [hero, setHero] = useState(false)
   const [twilioRoom, setTwilioRoom] = useState()
-  const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [participants, setParticipants] = useState([])
   const authenticated = useAuthenticated()
   const accessToken = useAccessToken()
@@ -68,14 +69,11 @@ const ServerSidePage = ({ user }) => {
           setIsCreator(true)
         }
         setRoom(data)
-        setLoading(false)
       })
       .catch((error) => {
         console.log('Failed loading room: ', error)
-        setError(true)
-        setLoading(false)
       })
-  }, [authenticated, router])
+  }, [authenticated, router, id, user.id, accessToken])
 
   useEffect(() => {
     if (room) {
@@ -83,7 +81,7 @@ const ServerSidePage = ({ user }) => {
         const now = new Date()
         const start = new Date(room.addedDate)
         const diff = now - start
-        // Always show 2 digits
+
         const hours = Math.floor(diff / (1000 * 60 * 60))
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
         const seconds = Math.floor((diff % (1000 * 60)) / 1000)
@@ -103,7 +101,7 @@ const ServerSidePage = ({ user }) => {
         clearInterval(interval)
       }
     }
-  }, [room])
+  }, [room, twilioRoom])
 
   useEffect(() => {
     if (twilioRoom) {
@@ -135,6 +133,7 @@ const ServerSidePage = ({ user }) => {
         clearInterval(interval)
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [twilioRoom])
 
   useEffect(() => {
@@ -173,7 +172,7 @@ const ServerSidePage = ({ user }) => {
           })
       }
     }
-  }, [input])
+  }, [input, twilioRoom])
 
   function participantConnected(participant) {
     const joinSound = document.getElementById('join-sound')
@@ -226,7 +225,6 @@ const ServerSidePage = ({ user }) => {
     await connect(user.id, id, setTwilioRoom, twilioRoom, isCreator).catch(
       (error) => {
         console.log('Failed to connect: ', error)
-        setError(true)
       }
     )
     setConnected(true)
@@ -261,7 +259,6 @@ const ServerSidePage = ({ user }) => {
   }
 
   const shape = Math.sqrt(participants.length)
-  console.log('hero', hero)
 
   return (
     <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-[#13111c] text-white">
@@ -335,7 +332,14 @@ const ServerSidePage = ({ user }) => {
               }
             }}
           >
-            <div className="video flex h-full max-h-full w-auto flex-col items-center justify-center self-center"></div>
+            <div className="video relative flex h-full max-h-full w-auto flex-col items-center justify-center self-center bg-secondary">
+              <span className="absolute z-0 flex flex-col items-center justify-center">
+                <Avatar name={participant.identity} />
+                <span className="text-center text-xl font-semibold">
+                  <RenderName id={participant.identity} />
+                </span>
+              </span>
+            </div>
             <div className="absolute top-0 w-full rounded-lg bg-opacity-25 p-4 text-center">
               <RenderName id={participant.identity} />
             </div>
@@ -486,120 +490,6 @@ const ServerSidePage = ({ user }) => {
   )
 }
 
-function attachTrack(track, id) {
-  try {
-    const $videoContainer = document.getElementById(`participant-${id}`)
-    const $video = $videoContainer.querySelector('.video')
-    $video.appendChild(track.attach())
-
-    const video = $video.querySelector('video')
-    if (video) {
-      video.classList.add(
-        'inline-flex',
-        'items-center',
-        'justify-center',
-        'border-2'
-      )
-      // Force video size
-      video.setAttribute('width', '100%')
-      video.setAttribute('height', '100%')
-
-      // Keep last one video remove others
-      const videos = $videoContainer.querySelectorAll('video')
-      videos.forEach((e, index) => {
-        if (index !== videos.length - 1) {
-          e.remove()
-        }
-      })
-
-      const audioEl = $videoContainer.querySelector('audio')
-      if (audioEl) {
-        audioEl.id = `video-${id}`
-      }
-    }
-  } catch (error) {
-    console.log('Failed to attach track: ', error)
-  }
-}
-
-async function connect(userId, roomId, setRoom, room, isCreator) {
-  const response = await fetch(`/api/get-token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      identity: userId,
-      id: roomId,
-    }),
-  })
-  const data = await response.json()
-  setRoom(
-    await Video.connect(data.token, {
-      name: roomId,
-      dominantSpeaker: isCreator,
-    })
-  )
-}
-
-async function addLocalVideo(type, room) {
-  const $localVideo = document.getElementById('local-video')
-
-  const localTracks = await Video.createLocalVideoTrack({
-    audio: {
-      name: 'microphone',
-    },
-    video: {
-      name: 'camera',
-      width: { ideal: 1920 },
-      height: { ideal: 1080 },
-    },
-  })
-
-  $localVideo.appendChild(localTracks.attach())
-
-  const $videos = $localVideo.querySelectorAll('video')
-
-  // Remove all videos except the first one
-  $videos.forEach((video) => {
-    if (video !== $videos[0]) {
-      video.remove()
-    }
-  })
-
-  $videos[0].classList.add(
-    'rounded-lg',
-    'shadow-lg',
-    'h-full',
-    'w-auto',
-    'object-cover'
-  )
-}
-
-function RenderName({ id, className }) {
-  const [loading, setLoading] = useState(true)
-  const [name, setName] = useState('')
-
-  useEffect(() => {
-    const getName = async () => {
-      const res = await fetch(
-        `https://ggtmuhdidjxsglsqyfga.nhost.run/api/rest/get-user/${id}`
-      ).then((res) => res.json())
-      console.log(res)
-      setName(res.user.displayName)
-      setLoading(false)
-    }
-    getName()
-  }, [id])
-
-  if (loading) {
-    return '...'
-  }
-
-  return <span className={className}>{name || 'Usuario anónimo'}</span>
-}
-
-// SERVER SIDE RENDERING
 export async function getServerSideProps(context) {
   const nhostSession = await getNhostSession(
     'https://ggtmuhdidjxsglsqyfga.nhost.run',
@@ -614,18 +504,6 @@ export async function getServerSideProps(context) {
       user,
     },
   }
-}
-
-function checkDevice(userAgent) {
-  return (
-    userAgent.match(/Android/i) ||
-    userAgent.match(/webOS/i) ||
-    userAgent.match(/iPhone/i) ||
-    userAgent.match(/iPad/i) ||
-    userAgent.match(/iPod/i) ||
-    userAgent.match(/BlackBerry/i) ||
-    userAgent.match(/Windows Phone/i)
-  )
 }
 
 export default ServerSidePage
