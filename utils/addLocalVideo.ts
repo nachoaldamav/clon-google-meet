@@ -1,9 +1,10 @@
 import * as Video from 'twilio-video'
 
-export default async function addLocalVideo(type, room) {
+export default async function addLocalVideo(camera: MediaDeviceInfo) {
   const $localVideo = document.getElementById('local-video')
 
   const localTracks = await Video.createLocalVideoTrack({
+    // @ts-ignore-next-line
     audio: {
       name: 'microphone',
     },
@@ -14,16 +15,17 @@ export default async function addLocalVideo(type, room) {
     },
   })
 
-  $localVideo.appendChild(localTracks.attach())
+  $localVideo?.appendChild(localTracks.attach())
 
-  const $videos = $localVideo.querySelectorAll('video')
+  const $videos = $localVideo?.querySelectorAll('video')
 
   // Remove all videos except the first one
-  $videos.forEach((video) => {
+  $videos?.forEach((video) => {
     if (video !== $videos[0]) {
       video.remove()
     }
   })
 
-  $videos[0].classList.add('rounded-lg', 'shadow-lg', 'h-full', 'w-auto')
+  if ($videos)
+    $videos[0].classList.add('rounded-lg', 'shadow-lg', 'h-full', 'w-auto')
 }

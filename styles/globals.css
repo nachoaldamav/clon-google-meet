@@ -9,7 +9,7 @@ video {
 }
 
 .camera-ring {
-  @apply border-[#7c2dca];
+  @apply border-[#8000ff];
 }
 
 .camera-ring-off {

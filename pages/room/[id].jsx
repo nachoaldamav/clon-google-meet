@@ -20,15 +20,20 @@ import detachTracks from '../../utils/detachTracks'
 import parseAudioTracks from '../../utils/getAudioTracks'
 import { stopTracks } from '../../utils/stopTracks'
 import setVolumeRing from '../../utils/setVolumeRing'
-import Avatar from '../../components/avatar'
+import Avatar from '../../components/Avatar'
 import attachTrack from '../../utils/attachTrack'
 import { connect } from '../../utils/connect'
 import addLocalVideo from '../../utils/addLocalVideo'
 import RenderName from '../../utils/renderName'
 import checkDevice from '../../utils/checkDevice'
+import ParticipantVideo from '../../components/Participant'
+import GridLayout from '../../components/GridLayout'
+import { AnimatePresence } from 'framer-motion'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
+  const authenticated = useAuthenticated()
+  const accessToken = useAccessToken()
   const id = router.query.id
   const [time, setTime] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
@@ -43,8 +48,6 @@ const ServerSidePage = ({ user }) => {
   const [hero, setHero] = useState(false)
   const [twilioRoom, setTwilioRoom] = useState()
   const [participants, setParticipants] = useState([])
-  const authenticated = useAuthenticated()
-  const accessToken = useAccessToken()
 
   const [input, setInput] = useState('camera')
 
@@ -94,7 +97,6 @@ const ServerSidePage = ({ user }) => {
       }, 1000)
 
       return () => {
-        console.log('cleaning up')
         if (twilioRoom) {
           twilioRoom.disconnect()
         }
@@ -128,8 +130,6 @@ const ServerSidePage = ({ user }) => {
       twilioRoom.on('participantConnected', participantConnected)
       twilioRoom.on('participantDisconnected', participantDisconnected)
 
-      twilioRoom.on('trackDisabled', console.log)
-
       // Clear interval when disconnected
       twilioRoom.on('disconnected', () => {
         clearInterval(interval)
@@ -153,7 +153,7 @@ const ServerSidePage = ({ user }) => {
 
       // Add new video track
       if (input === 'camera') {
-        const screenTrack = navigator.mediaDevices
+        navigator.mediaDevices
           .getUserMedia({
             video: true,
             audio: true,
@@ -163,7 +163,7 @@ const ServerSidePage = ({ user }) => {
             localParticipant.publishTrack(track)
           })
       } else if (input === 'screen') {
-        const screenTrack = navigator.mediaDevices
+        navigator.mediaDevices
           .getDisplayMedia({
             video: true,
             audio: true,
@@ -223,7 +223,7 @@ const ServerSidePage = ({ user }) => {
 
   const handleConnect = async () => {
     setConnecting(true)
-    addLocalVideo(input)
+    addLocalVideo(camera)
     await connect(user.id, id, setTwilioRoom, twilioRoom, isCreator).catch(
       (error) => {
         console.log('Failed to connect: ', error)
@@ -250,7 +250,6 @@ const ServerSidePage = ({ user }) => {
       const localParticipant = twilioRoom.localParticipant
       const localTracks = Array.from(localParticipant.audioTracks.values())
       localTracks.forEach((track) => {
-        console.log(track.track)
         if (!muted) {
           track.track.disable()
         } else {
@@ -258,6 +257,18 @@ const ServerSidePage = ({ user }) => {
         }
       })
     }
+  }
+
+  const addDemoParticipant = () => {
+    const demoParticipant = {
+      sid: 'demo',
+      identity: '319a1842-4182-4b68-ae88-273c60bbbc93',
+    }
+
+    setParticipants((prevParticipants) => [
+      ...prevParticipants,
+      demoParticipant,
+    ])
   }
 
   const shape = Math.sqrt(participants.length)
@@ -280,74 +291,19 @@ const ServerSidePage = ({ user }) => {
         <MenuIcon />
       </button>
       {!preflight && <PreflightCheck setPreflight={setPreflight} />}
-      <div
-        className={`flex-0 grid h-screen max-h-screen w-4/5 grid-flow-col items-center justify-center rounded-lg px-2`}
-        style={
-          !hero
-            ? {
-                gridTemplateColumns: `repeat(${Math.ceil(shape)}, 1fr)`,
-                gridTemplateRows: `repeat(${Math.round(
-                  shape
-                )}, minmax(0, 1fr))`,
-                gap: '0.5rem',
-                gridAutoRows: '1fr',
-                height: '100%',
-              }
-            : {
-                gridTemplateColumns: `repeat(${Math.ceil(
-                  shape
-                )}, minmax(0, 1fr))`,
-                gridTemplateRows: `repeat(${Math.round(
-                  shape
-                )}, minmax(0, 1fr))`,
-                gap: '0.1rem',
-                gridAutoRows: '1fr',
-                height: '100%',
-              }
-        }
-      >
-        {participants.map((participant, index) => (
-          <div
-            className="participant relative flex cursor-pointer items-center justify-center rounded-lg border-2 border-transparent p-2"
-            key={index}
-            id={`participant-${participant.identity}`}
-            style={
-              hero && `participant-${participant.identity}` === hero
-                ? {
-                    gridColumnStart: 1,
-                    gridColumnEnd: `${Math.ceil(shape - 1)}`,
-                    gridRowStart: 1,
-                    gridRowEnd: `${Math.ceil(shape - 1)}`,
-                    height: '100%',
-                    width: '100%',
-                  }
-                : {
-                    height: '100%',
-                    width: '100%',
-                  }
-            }
-            onClick={() => {
-              if (hero !== `participant-${participant.identity}`) {
-                setHero(`participant-${participant.identity}`)
-              } else {
-                setHero(false)
-              }
-            }}
-          >
-            <div className="video relative flex h-full max-h-full w-auto flex-col items-center justify-center self-center bg-secondary">
-              <span className="absolute z-0 flex flex-col items-center justify-center">
-                <Avatar name={participant.identity} />
-                <span className="text-center text-xl font-semibold">
-                  <RenderName id={participant.identity} />
-                </span>
-              </span>
-            </div>
-            <div className="absolute top-0 z-20 w-full rounded-lg bg-opacity-25 p-4 text-center">
-              <RenderName id={participant.identity} />
-            </div>
-          </div>
-        ))}
-      </div>
+      <GridLayout hero={hero} shape={shape}>
+        <AnimatePresence>
+          {participants.map((participant, index) => (
+            <ParticipantVideo
+              key={index}
+              participant={participant}
+              hero={hero}
+              shape={shape}
+              setHero={setHero}
+            />
+          ))}
+        </AnimatePresence>
+      </GridLayout>
       <aside
         className={
           asideOpen
@@ -362,7 +318,7 @@ const ServerSidePage = ({ user }) => {
         )}
         <div className="hidden h-screen max-h-screen w-full flex-col items-center justify-start px-4 md:mb-4 md:mt-10 lg:flex ">
           <h3 className="w-full text-xl font-bold text-white">Participantes</h3>
-          <div className="flex max-h-full w-full flex-col items-start justify-start ">
+          <div className="flex max-h-72 w-full flex-col items-start justify-start gap-2 overflow-x-auto ">
             {participants.map((participant, index) => (
               <div
                 className="group flex w-full flex-row items-center justify-between gap-2"
@@ -457,7 +413,6 @@ const ServerSidePage = ({ user }) => {
                   localParticipant.videoTracks.values()
                 )
                 localTracks.forEach((track) => {
-                  console.log(track.track)
                   if (!hideCamera) {
                     track.track.disable()
                   } else {
@@ -474,7 +429,6 @@ const ServerSidePage = ({ user }) => {
                   'my-2 mx-4 rounded-full bg-green-600 p-3 text-white transition hover:bg-green-700'
                 }
                 onClick={() => {
-                  console.log(input)
                   if (input === 'camera') {
                     setInput('screen')
                   } else {

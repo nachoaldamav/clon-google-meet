@@ -35,8 +35,6 @@ export default function AudioTest() {
       })
   }, [])
 
-  console.log(volume)
-
   return (
     <div className="inline-flex w-full items-center gap-2 px-2">
       <MicIcon muted={true} />

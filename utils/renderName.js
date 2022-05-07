@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function RenderName({ id, className }) {
+export default function RenderName({ id, className = '' }) {
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
 
@@ -15,9 +15,9 @@ export default function RenderName({ id, className }) {
     getName()
   }, [id])
 
-  if (loading) {
-    return '...'
-  }
-
-  return <span className={className}>{name || 'Usuario anónimo'}</span>
+  return loading ? (
+    <span>...</span>
+  ) : (
+    <span className={className}>{name || 'Usuario anónimo'}</span>
+  )
 }

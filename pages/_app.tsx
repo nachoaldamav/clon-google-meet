@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { NhostNextProvider } from '@nhost/nextjs'
+import { UserCameraProvider, useUserCamera } from '../context/userCamera'
 import nhost from '../libs/nhost'
 import Head from 'next/head'
 
@@ -32,7 +33,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="https://og-image.vercel.app/**Clon**%20meet.png?theme=dark&md=1&fontSize=100px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fvercel-triangle-white.svg"
         ></meta>
       </Head>
-      <Component {...pageProps} />
+      <UserCameraProvider>
+        <Component {...pageProps} />
+      </UserCameraProvider>
     </NhostNextProvider>
   )
 }
