@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 import * as Video from 'twilio-video'
-import { v4 as uuidv4 } from 'uuid'
-import LoadingIcon from './icons/Loading'
 import { motion } from 'framer-motion'
-import AudioTest from './audio'
+import {
+  Start,
+  Permissions,
+  CheckCamera,
+  CheckMicrophone,
+  CheckConnection,
+} from './preflightSteps'
 
 const stepsComponents = [
   {
@@ -11,17 +15,7 @@ const stepsComponents = [
     title: '¡Vamos a empezar!',
     description:
       'Te ayudaremos a resolver cualquier problema de vídeo que tengas, pero primero vamos a comprobar tu configuración.',
-    Component: () => {
-      return (
-        <div className="flex h-full w-full flex-col">
-          <img
-            src="/images/hangout.svg"
-            alt="Hangout"
-            className="mx-auto my-4 w-64"
-          />
-        </div>
-      )
-    },
+    Component: () => <Start />,
   },
   {
     id: 2,
@@ -29,98 +23,23 @@ const stepsComponents = [
     description:
       'Comprobamos que tienes los permisos necesarios para acceder a tu cámara y micrófono.',
     required: true,
-    Component: (setPermissions) => {
-      return (
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <button
-            className="my-2 mx-4 rounded-lg border-2 bg-blue-600 px-2 py-1 font-bold text-white hover:bg-blue-700"
-            onClick={() => setPermissions()}
-          >
-            Comprobar permisos
-          </button>
-        </div>
-      )
-    },
+    Component: (setPermissions) => (
+      <Permissions setPermissions={setPermissions} />
+    ),
   },
   {
     id: 3,
     title: 'Comprueba tu cámara',
     description: 'Comprueba que tu cámara está funcionando correctamente.',
-    Component: (setPermissions, currentStep) => {
-      const [inputs, setInputs] = useState()
-
-      useEffect(() => {
-        if (currentStep === 2) {
-          const video = document.getElementById('local-video')
-          const track = navigator.mediaDevices.getUserMedia({ video: true })
-          track.then(function (stream) {
-            video.srcObject = stream
-          })
-
-          navigator.mediaDevices.enumerateDevices().then((devices) => {
-            const cameraInputs = devices.filter(
-              (device) => device.kind === 'videoinput'
-            )
-            setInputs(cameraInputs)
-          })
-        } else {
-          const video = document.getElementById('local-video')
-          video.srcObject = null
-        }
-      }, [currentStep])
-
-      function handleChange(e) {
-        const video = document.getElementById('local-video')
-        const track = navigator.mediaDevices.getUserMedia({
-          video: {
-            deviceId: e.target.value,
-          },
-        })
-        track.then(function (stream) {
-          video.srcObject = stream
-        })
-        setCamera(e.target.value)
-      }
-
-      return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg border border-[#2e2b3b] bg-secondary py-4 shadow">
-          <h3 className="text-center text-sm font-bold">Previsualización</h3>
-          <video
-            className="h-auto w-2/3 rounded"
-            autoPlay
-            playsInline
-            muted
-            id="local-video"
-          />
-          <select
-            onChange={handleChange}
-            className="mx-4 w-2/3 rounded bg-primary text-white"
-          >
-            {inputs &&
-              inputs.map((input) => (
-                <option key={input.deviceId} value={input.deviceId}>
-                  {input.label}
-                </option>
-              ))}
-          </select>
-        </div>
-      )
-    },
+    Component: (setPermissions, currentStep) => (
+      <CheckCamera currentStep={currentStep} />
+    ),
   },
   {
     id: 4,
     title: 'Comprueba tu micrófono',
     description: 'Comprueba que tu micrófono está funcionando correctamente.',
-    Component: (setPermissions, currentStep) => {
-      return (
-        <div
-          className=" mr-2 flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg bg-secondary py-4 shadow-md"
-          style={{}}
-        >
-          <AudioTest />
-        </div>
-      )
-    },
+    Component: () => <CheckMicrophone />,
   },
   {
     id: 5,
@@ -128,97 +47,13 @@ const stepsComponents = [
     description: 'Ahora vamos a comprobar tu conexión a internet.',
     required: true,
     end: true,
-    Component: (setPermissions, currentStep, setToken, steps, setPreflight) => {
-      const [loading, setLoading] = useState(false)
-      const [sent, setSent] = useState(false)
-      const [error, setError] = useState(false)
-      const [stepsLenght, setStepsLenght] = useState(0)
-
-      useEffect(() => {
-        setStepsLenght(steps.length)
-      }, [steps])
-
-      return (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg border border-[#2e2b3b] bg-secondary py-4">
-          {!sent && (
-            <button
-              className="my-2 mx-4 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-blue-600 px-2 py-1 font-bold text-white hover:bg-blue-700"
-              onClick={() => {
-                setLoading(true)
-                fetch('/api/get-token', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    id: uuidv4(),
-                    identity: uuidv4(),
-                  }),
-                })
-                  .then((res) => res.json())
-                  .then((res) => {
-                    setLoading(false)
-                    setSent(true)
-                    setToken(res.token)
-                  })
-                  .catch((err) => {
-                    setLoading(false)
-                    setError(true)
-                  })
-              }}
-            >
-              {loading ? (
-                <>
-                  <LoadingIcon /> Enviando...
-                </>
-              ) : (
-                <>Empezar test</>
-              )}
-            </button>
-          )}
-          {sent && (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-              <h3 className="text-center text-sm font-bold">
-                {stepsLenght} / 7 test completados
-              </h3>
-              {stepsLenght >= 7 && !error && (
-                <>
-                  <h4 className="text-center text-sm font-bold text-green-500">
-                    ¡Todo listo!
-                  </h4>
-                  <button
-                    className="my-2 mx-4 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-blue-600 px-2 py-1 font-bold text-white hover:bg-blue-700"
-                    onClick={() => {
-                      setPreflight(true)
-                      window.localStorage.setItem('preflight', true)
-                    }}
-                  >
-                    Finalizar
-                  </button>
-                </>
-              )}
-              {error && (
-                <>
-                  <h4 className="text-center text-sm font-bold text-red-500">
-                    Ha ocurrido un error, puede que tengas problemas dentro de
-                    la videollamada.
-                  </h4>
-                  <button
-                    className="my-2 mx-4 inline-flex items-center justify-center gap-2 rounded-lg border-2 bg-blue-600 px-2 py-1 font-bold text-white hover:bg-blue-700"
-                    onClick={() => {
-                      setPreflight(true)
-                      window.localStorage.setItem('preflight', true)
-                    }}
-                  >
-                    Continuar igualmente
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      )
-    },
+    Component: (setPermissions, currentStep, setToken, steps, setPreflight) => (
+      <CheckConnection
+        setToken={setToken}
+        steps={steps}
+        setPreflight={setPreflight}
+      />
+    ),
   },
 ]
 

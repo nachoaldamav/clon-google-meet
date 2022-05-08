@@ -1,18 +1,14 @@
 import Head from 'next/head'
-import { useAuthenticated, useUserData } from '@nhost/nextjs'
-import { useRouter } from 'next/router'
+import { useAuthenticated } from '@nhost/nextjs'
 import AuthPanel from '../components/AuthPanel'
 import nhost from '../libs/nhost'
-import Link from 'next/link'
-import HomeLayout from 'components/Home'
+import HomeLayout from '../components/Home'
 import { useEffect, useState } from 'react'
 
 const Home = () => {
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   const isAuthenticated = useAuthenticated()
-  const user = useUserData()
 
   useEffect(() => {
     setLoading(false)
