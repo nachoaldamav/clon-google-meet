@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useUserSettings } from '../../context/userSettings'
 import AudioTest from '../audio'
 import CheckConn from './CheckConn'
 
@@ -29,6 +30,7 @@ export function Permissions({ setPermissions }) {
 
 export function CheckCamera({ currentStep }) {
   const [inputs, setInputs] = useState()
+  const { settings, setSettings } = useUserSettings()
 
   useEffect(() => {
     if (currentStep === 2) {
@@ -48,6 +50,7 @@ export function CheckCamera({ currentStep }) {
       const video = document.getElementById('local-video')
       video.srcObject = null
     }
+    // eslint-disable-next-line
   }, [currentStep])
 
   function handleChange(e) {
@@ -57,10 +60,10 @@ export function CheckCamera({ currentStep }) {
         deviceId: e.target.value,
       },
     })
+    setSettings({ ...settings, defaultCamera: e.target.value })
     track.then(function (stream) {
       video.srcObject = stream
     })
-    setCamera(e.target.value)
   }
 
   return (

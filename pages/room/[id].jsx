@@ -29,11 +29,13 @@ import checkDevice from '../../utils/checkDevice'
 import ParticipantVideo from '../../components/Participant'
 import GridLayout from '../../components/GridLayout'
 import { AnimatePresence } from 'framer-motion'
+import { useUserSettings } from '../../context/userSettings'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
   const authenticated = useAuthenticated()
   const accessToken = useAccessToken()
+  const { settings } = useUserSettings()
   const id = router.query.id
   const [time, setTime] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
@@ -155,8 +157,12 @@ const ServerSidePage = ({ user }) => {
       if (input === 'camera') {
         navigator.mediaDevices
           .getUserMedia({
-            video: true,
-            audio: true,
+            video: {
+              deviceId: { exact: settings.defaultCamera || 'default' },
+            },
+            audio: {
+              deviceId: { exact: settings.defaultMic || 'default' },
+            },
           })
           .then((stream) => {
             const track = stream.getVideoTracks()[0]
@@ -166,7 +172,9 @@ const ServerSidePage = ({ user }) => {
         navigator.mediaDevices
           .getDisplayMedia({
             video: true,
-            audio: true,
+            audio: {
+              deviceId: { exact: settings.defaultMic },
+            },
           })
           .then((stream) => {
             const track = stream.getVideoTracks()[0]
@@ -174,7 +182,7 @@ const ServerSidePage = ({ user }) => {
           })
       }
     }
-  }, [input, twilioRoom])
+  }, [input, twilioRoom, settings])
 
   function participantConnected(participant) {
     const joinSound = document.getElementById('join-sound')
@@ -223,7 +231,7 @@ const ServerSidePage = ({ user }) => {
 
   const handleConnect = async () => {
     setConnecting(true)
-    addLocalVideo(camera)
+    addLocalVideo(settings)
     await connect(user.id, id, setTwilioRoom, twilioRoom, isCreator).catch(
       (error) => {
         console.log('Failed to connect: ', error)

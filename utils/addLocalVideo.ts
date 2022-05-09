@@ -1,18 +1,10 @@
 import * as Video from 'twilio-video'
 
-export default async function addLocalVideo(camera: MediaDeviceInfo) {
+export default async function addLocalVideo(settings: Settings) {
   const $localVideo = document.getElementById('local-video')
 
   const localTracks = await Video.createLocalVideoTrack({
-    // @ts-ignore-next-line
-    audio: {
-      name: 'microphone',
-    },
-    video: {
-      name: 'camera',
-      width: { ideal: 1920 },
-      height: { ideal: 1080 },
-    },
+    deviceId: { exact: settings.defaultCamera },
   })
 
   $localVideo?.appendChild(localTracks.attach())
@@ -28,4 +20,9 @@ export default async function addLocalVideo(camera: MediaDeviceInfo) {
 
   if ($videos)
     $videos[0].classList.add('rounded-lg', 'shadow-lg', 'h-full', 'w-auto')
+}
+
+type Settings = {
+  defaultCamera: string
+  defaultMicrophone: string
 }

@@ -30,7 +30,8 @@ const stepsComponents = [
   {
     id: 3,
     title: 'Comprueba tu cámara',
-    description: 'Comprueba que tu cámara está funcionando correctamente.',
+    description:
+      'Selecciona una cámara y comprueba que funciona. (Tu selección se guardará)',
     Component: (setPermissions, currentStep) => (
       <CheckCamera currentStep={currentStep} />
     ),
@@ -38,13 +39,14 @@ const stepsComponents = [
   {
     id: 4,
     title: 'Comprueba tu micrófono',
-    description: 'Comprueba que tu micrófono está funcionando correctamente.',
+    description:
+      'Selecciona un micrófono y comprueba que funciona. (Tu selección se guardará)',
     Component: () => <CheckMicrophone />,
   },
   {
     id: 5,
     title: 'Comprobación de conexión',
-    description: 'Ahora vamos a comprobar tu conexión a internet.',
+    description: 'Ahora hay que comprobar que tu conexión está funcionando.',
     required: true,
     end: true,
     Component: (setPermissions, currentStep, setToken, steps, setPreflight) => (
