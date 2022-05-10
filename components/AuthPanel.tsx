@@ -67,7 +67,7 @@ export default function AuthPanel() {
           className={
             formType === 'login'
               ? 'rounded-xl border-2 border-white bg-primary py-2 px-4 font-bold text-gray-200 hover:bg-secondary'
-              : 'rounded-xl border-2 border-[#2e2b3b] bg-primary py-2 px-4 font-bold text-gray-200 hover:border-gray-500 hover:bg-secondary'
+              : 'rounded-xl border-2 border-[#2e2b3b] bg-primary py-2 px-4 font-bold text-gray-200 transition duration-200 hover:border-gray-500 hover:bg-secondary'
           }
           onClick={() => setFormType('login')}
         >
@@ -77,7 +77,7 @@ export default function AuthPanel() {
           className={
             formType === 'register'
               ? 'rounded-xl border-2 border-white bg-primary py-2 px-4 font-bold text-gray-200 hover:bg-secondary'
-              : 'rounded-xl border-2 border-[#2e2b3b] bg-primary py-2 px-4 font-bold text-gray-200 hover:border-gray-500 hover:bg-secondary'
+              : 'rounded-xl border-2 border-[#2e2b3b] bg-primary py-2 px-4 font-bold text-gray-200 transition duration-200 hover:border-gray-500 hover:bg-secondary'
           }
           onClick={() => setFormType('register')}
         >
