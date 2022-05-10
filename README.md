@@ -1,3 +1,4 @@
+
 # Google Meet Clone
 
 Clon de Google Meet para la Hackathon de Midudev https://twitch.tv/midudev
@@ -17,4 +18,11 @@ Clon de Google Meet para la Hackathon de Midudev https://twitch.tv/midudev
 	- Encender/apagar micrófono
 	- Silenciar usuarios
 
+**Tecnologías**
 
+ - Next.js | [nextjs.org](https://nextjs.org)
+ - Nhost para la BBDD y el Auth | [nhost.io](https://nhost.io)
+ - Tailwind CSS | [tailwindcss.com](https://tailwindcss.com)
+ - Twilio | [twilio.com](https://twilio.com)
+ - Heroicons | [heroicons.com](https://heroicons.com)
+ - Boring avatars | [boringavatars.com](https://boringavatars.com)
