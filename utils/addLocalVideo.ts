@@ -3,23 +3,32 @@ import * as Video from 'twilio-video'
 export default async function addLocalVideo(settings: Settings) {
   const $localVideo = document.getElementById('local-video')
 
-  const localTracks = await Video.createLocalVideoTrack({
-    deviceId: { exact: settings.defaultCamera },
-  })
+  const previousVideo = $localVideo?.querySelector('video')
+  if (previousVideo) {
+    $localVideo?.removeChild(previousVideo)
+  }
 
-  $localVideo?.appendChild(localTracks.attach())
+  try {
+    const localTracks = await Video.createLocalVideoTrack({
+      deviceId: { exact: settings.defaultCamera },
+    })
 
-  const $videos = $localVideo?.querySelectorAll('video')
+    $localVideo?.appendChild(localTracks.attach())
 
-  // Remove all videos except the first one
-  $videos?.forEach((video) => {
-    if (video !== $videos[0]) {
-      video.remove()
-    }
-  })
+    const $videos = $localVideo?.querySelectorAll('video')
 
-  if ($videos)
-    $videos[0].classList.add('rounded-lg', 'shadow-lg', 'h-full', 'w-auto')
+    // Remove all videos except the first one
+    $videos?.forEach((video) => {
+      if (video !== $videos[0]) {
+        video.remove()
+      }
+    })
+
+    if ($videos)
+      $videos[0].classList.add('rounded-lg', 'shadow-lg', 'h-full', 'w-auto')
+  } catch (error) {
+    console.error("Couldn't add local video", error)
+  }
 }
 
 type Settings = {

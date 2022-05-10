@@ -6,8 +6,11 @@ import MicIcon from '../../components/icons/Mic'
 import CameraIcon from '../../components/icons/Camera'
 import ScreenIcon from '../../components/icons/Screen'
 import MenuIcon from '../../components/icons/Menu'
+import SettingsIcon from '../../components/icons/Settings'
 import ExpandIcon from '../../components/icons/Expand'
 import GridIcon from '../../components/icons/Grid'
+import SettingsComponent from '../../components/SettingsPopup'
+import RoomTimer from '../../components/RoomTimer'
 import ParticipantMute from '../../components/ParticipantMute'
 import {
   getNhostSession,
@@ -36,8 +39,8 @@ const ServerSidePage = ({ user }) => {
   const authenticated = useAuthenticated()
   const accessToken = useAccessToken()
   const { settings } = useUserSettings()
+  const [settingsPopup, setSettingsPopup] = useState(false)
   const id = router.query.id
-  const [time, setTime] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
   const [asideOpen, setAsideOpen] = useState(false)
   const [muted, setMuted] = useState(false)
@@ -81,33 +84,6 @@ const ServerSidePage = ({ user }) => {
   }, [authenticated, router])
 
   useEffect(() => {
-    if (room) {
-      const interval = setInterval(() => {
-        const now = new Date()
-        const start = new Date(room.addedDate)
-        const diff = now - start
-
-        const hours = Math.floor(diff / (1000 * 60 * 60))
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-
-        setTime(
-          `${hours <= 9 ? '0' + hours : hours}:${
-            minutes <= 9 ? '0' + minutes : minutes
-          }:${seconds <= 9 ? '0' + seconds : seconds}`
-        )
-      }, 1000)
-
-      return () => {
-        if (twilioRoom) {
-          twilioRoom.disconnect()
-        }
-        clearInterval(interval)
-      }
-    }
-  }, [room, twilioRoom])
-
-  useEffect(() => {
     if (twilioRoom) {
       let interval
       try {
@@ -136,6 +112,16 @@ const ServerSidePage = ({ user }) => {
       twilioRoom.on('disconnected', () => {
         clearInterval(interval)
       })
+    }
+
+    return () => {
+      if (twilioRoom) {
+        twilioRoom.off('participantConnected', participantConnected)
+        twilioRoom.off('participantDisconnected', participantDisconnected)
+        twilioRoom.off('disconnected', () => {
+          clearInterval(interval)
+        })
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [twilioRoom])
@@ -283,6 +269,13 @@ const ServerSidePage = ({ user }) => {
 
   return (
     <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-[#13111c] text-white">
+      <button
+        className="group absolute top-0 left-0 z-[90] m-2 rounded border border-white bg-secondary p-2 text-white"
+        onClick={() => setSettingsPopup(!settingsPopup)}
+      >
+        <SettingsIcon />
+      </button>
+      {settingsPopup && <SettingsComponent setPopUp={setSettingsPopup} />}
       <span className="pattern-dots absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center opacity-5 pattern-bg-transparent pattern-white pattern-size-4" />
       <audio
         id="join-sound"
@@ -319,11 +312,7 @@ const ServerSidePage = ({ user }) => {
             : 'relative hidden h-[95%] w-96 flex-1 flex-col justify-end rounded-l-lg border-2 border-[#2e2b3b] bg-[#181622] text-white md:flex'
         }
       >
-        {connected && (
-          <span className="absolute top-0 inline-flex w-full justify-center p-2 text-xl font-bold text-white">
-            {time}
-          </span>
-        )}
+        {connected && <RoomTimer room={room} />}
         <div className="hidden h-screen max-h-screen w-full flex-col items-center justify-start px-4 md:mb-4 md:mt-10 lg:flex ">
           <h3 className="w-full text-xl font-bold text-white">Participantes</h3>
           <div className="flex max-h-72 w-full flex-col items-start justify-start gap-2 overflow-x-auto ">
@@ -384,10 +373,16 @@ const ServerSidePage = ({ user }) => {
             )}
           </button>
         )}
-        <span
-          className="my-2 inline-flex items-center justify-center px-2"
+        <div
+          className="relative my-2 inline-flex items-center justify-center px-2"
           id="local-video"
-        />
+        >
+          {input === 'screen' && (
+            <span className="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-black bg-opacity-30 text-xl font-bold text-white">
+              Compartiendo pantalla
+            </span>
+          )}
+        </div>
         {connected && (
           <div className="flex flex-row items-center justify-center">
             <button

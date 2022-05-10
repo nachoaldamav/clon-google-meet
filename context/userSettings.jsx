@@ -5,7 +5,7 @@ const UserContext = createContext({
     defaultCamera: 'default',
     defaultMicrophone: 'default',
   },
-  setSettings: () => {},
+  setSettings: (e) => {},
 })
 
 export const UserProvider = ({ children }) => {

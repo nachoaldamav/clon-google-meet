@@ -10,7 +10,7 @@ export default function setVolumeRing(twilioRoom, participants) {
             const participantEl = document.getElementById(
               `participant-${participant.identity}`
             )
-            const videoEl = participantEl.querySelector('video').classList
+            const videoEl = participantEl?.querySelector('video')?.classList
             const avatarEl = document.getElementById(
               `avatar-${participant.identity}`
             ).classList
@@ -28,7 +28,7 @@ export default function setVolumeRing(twilioRoom, participants) {
             const participantEl = document.getElementById(
               `participant-${participant.identity}`
             )
-            const videoEl = participantEl.querySelector('video').classList
+            const videoEl = participantEl?.querySelector('video')?.classList
             const avatarEl = document.getElementById(
               `avatar-${participant.identity}`
             ).classList
