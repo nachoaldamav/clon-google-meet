@@ -22,8 +22,8 @@ export const UserProvider = ({ children }) => {
       localStorage.setItem(
         'settings',
         JSON.stringify({
-          defaultCamera: '',
-          defaultMicrophone: '',
+          defaultCamera: 'default',
+          defaultMicrophone: 'default',
         })
       )
     }
