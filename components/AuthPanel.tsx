@@ -1,11 +1,9 @@
 import nhost from '../libs/nhost'
 import LoadingIcon from './icons/Loading'
-import { useAccessToken, useAuthenticated, useUserData } from '@nhost/nextjs'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import LoginButton from './LoginButton'
 import GoogleIcon from './icons/Google'
-import DiscordIcon from './icons/Discord'
 import GithubIcon from './icons/Github'
 
 export default function AuthPanel() {
@@ -158,46 +156,8 @@ export default function AuthPanel() {
           También puedes iniciar sesión con
         </p>
         <div className="flex flex-row items-center justify-center gap-2">
-          <LoginButton
-            onClick={async () => {
-              setLoading(true)
-              nhost.auth
-                .signIn({
-                  provider: 'google',
-                })
-                .then((login) => {
-                  console.log('login', login)
-                  if (login.error) {
-                    setError(login.error)
-                  } else {
-                    setError('')
-                  }
-                  setLoading(false)
-                })
-            }}
-          >
-            <GoogleIcon />
-          </LoginButton>
-          <LoginButton
-            onClick={async () => {
-              setLoading(true)
-              nhost.auth
-                .signIn({
-                  provider: 'github',
-                })
-                .then((login) => {
-                  console.log('login', login)
-                  if (login.error) {
-                    setError(login.error)
-                  } else {
-                    setError('')
-                  }
-                  setLoading(false)
-                })
-            }}
-          >
-            <GithubIcon />
-          </LoginButton>
+          <LoginButton id="google" Icon={GoogleIcon} />
+          <LoginButton id="github" Icon={GithubIcon} />
         </div>
       </div>
     </div>
