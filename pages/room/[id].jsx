@@ -1,5 +1,11 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import {
+  getNhostSession,
+  useAccessToken,
+  useAuthenticated,
+} from '@nhost/nextjs'
+
 import LoadingIcon from '../../components/icons/Loading'
 import PhoneIcon from '../../components/icons/Phone'
 import MicIcon from '../../components/icons/Mic'
@@ -12,11 +18,6 @@ import GridIcon from '../../components/icons/Grid'
 import SettingsComponent from '../../components/SettingsPopup'
 import RoomTimer from '../../components/RoomTimer'
 import ParticipantMute from '../../components/ParticipantMute'
-import {
-  getNhostSession,
-  useAccessToken,
-  useAuthenticated,
-} from '@nhost/nextjs'
 import getRoomData from '../../utils/getRoom'
 import PreflightCheck from '../../components/preflightCheck'
 import detachTracks from '../../utils/detachTracks'
@@ -144,15 +145,18 @@ const ServerSidePage = ({ user }) => {
         navigator.mediaDevices
           .getUserMedia({
             video: {
-              deviceId: { exact: settings.defaultCamera || 'default' },
+              deviceId: settings.defaultCamera,
             },
             audio: {
-              deviceId: { exact: settings.defaultMic || 'default' },
+              deviceId: settings.defaultMic,
             },
           })
           .then((stream) => {
             const track = stream.getVideoTracks()[0]
             localParticipant.publishTrack(track)
+          })
+          .catch((error) => {
+            console.log('Failed sending video...', settings)
           })
       } else if (input === 'screen') {
         navigator.mediaDevices
