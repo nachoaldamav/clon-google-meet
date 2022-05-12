@@ -23,7 +23,6 @@ export default function AuthPanel() {
       email: userData.email,
       password: userData.password,
     })
-    console.log('login', login)
 
     if (login.error) {
       setError(login.error)
@@ -47,7 +46,6 @@ export default function AuthPanel() {
         displayName: userData.nickname,
       },
     })
-    console.log('register', register)
 
     if (register.error) {
       setError(register.error)

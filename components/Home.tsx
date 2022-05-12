@@ -28,7 +28,6 @@ export default function HomeLayout() {
     try {
       getClipboard()
     } catch (e) {
-      console.log(e)
     }
   }, [])
 

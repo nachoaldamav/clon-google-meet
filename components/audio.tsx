@@ -53,7 +53,6 @@ export default function AudioTest() {
 
   useEffect(() => {
     if (selectedInput) {
-      console.log(selectedInput)
       setSettings({ ...settings, defaultMicrophone: selectedInput })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
