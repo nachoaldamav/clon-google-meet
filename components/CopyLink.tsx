@@ -28,7 +28,7 @@ export default function CopyLink() {
           <input
             type="text"
             value={roomId}
-            className="w-fit rounded-lg border-2 border-gray-300 p-2 text-black"
+            className="w-fit cursor-text rounded-lg border-2 border-gray-300 p-2 text-black"
             disabled
           />
           {!copied ? (
@@ -36,7 +36,9 @@ export default function CopyLink() {
               className="w-[5em] rounded-lg bg-blue-500 p-2 font-bold text-white"
               id="copy-button"
               onClick={() => {
-                navigator.clipboard.writeText(`${roomId}`)
+                navigator.clipboard.writeText(
+                  `https://hackathon-midu.vercel.app/room/${roomId}`
+                )
                 setCopied(true)
                 confetti({
                   particleCount: 100,
