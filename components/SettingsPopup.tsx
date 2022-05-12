@@ -34,9 +34,16 @@ export default function SettingsComponent({ setPopUp }: any) {
 
   return (
     <div className="absolute inset-0 z-[90] h-full w-full bg-white bg-opacity-10 backdrop-blur">
+      <span
+        className="absolute inset-0 z-[95] h-full w-full"
+        onClick={() => setPopUp(false)}
+      />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="absolute h-fit">
-          <div className="relative overflow-hidden rounded-lg bg-white text-black shadow-lg">
+          <div
+            className="relative z-[100] overflow-hidden rounded-lg bg-white text-black shadow-lg"
+            id="settings-popup"
+          >
             <button
               className="absolute top-0 right-0 p-2"
               onClick={() => setPopUp(false)}
