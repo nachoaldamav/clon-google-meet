@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function RenderName({ id, className = '' }) {
+export default function RenderName({ id, className = '' }: Props) {
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
 
@@ -20,4 +20,9 @@ export default function RenderName({ id, className = '' }) {
   ) : (
     <span className={className}>{name || 'Usuario anónimo'}</span>
   )
+}
+
+type Props = {
+  id: string
+  className?: string
 }

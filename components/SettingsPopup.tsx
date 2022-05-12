@@ -33,7 +33,7 @@ export default function SettingsComponent({ setPopUp }: any) {
   })
 
   return (
-    <div className="absolute inset-0 z-[90] h-full w-full bg-black bg-opacity-50">
+    <div className="absolute inset-0 z-[90] h-full w-full bg-white bg-opacity-10 backdrop-blur">
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="absolute h-fit">
           <div className="relative overflow-hidden rounded-lg bg-white text-black shadow-lg">
