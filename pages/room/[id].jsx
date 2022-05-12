@@ -34,6 +34,7 @@ import ParticipantVideo from '../../components/Participant'
 import GridLayout from '../../components/GridLayout'
 import { AnimatePresence } from 'framer-motion'
 import { useUserSettings } from '../../context/userSettings'
+import CopyLink from '../../components/CopyLink'
 
 const ServerSidePage = ({ user }) => {
   const router = useRouter()
@@ -273,6 +274,7 @@ const ServerSidePage = ({ user }) => {
 
   return (
     <div className="relative flex h-screen max-h-screen w-full flex-row items-center justify-center overflow-hidden bg-[#13111c] text-white">
+      <CopyLink />
       <button
         className="group absolute top-0 left-0 z-[90] m-2 rounded border border-white bg-secondary p-2 text-white"
         onClick={() => setSettingsPopup(!settingsPopup)}
