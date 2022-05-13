@@ -3,10 +3,12 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { validate } from 'uuid'
+import LoadingIcon from '../components/icons/Loading'
 
 export default function HomeLayout() {
   const router = useRouter()
   const [roomId, setRoomId] = useState<string | any>(null)
+  const [joining, setJoining] = useState<boolean>(false)
 
   useEffect(() => {
     async function getClipboard() {
@@ -27,9 +29,10 @@ export default function HomeLayout() {
 
     try {
       getClipboard()
-    } catch (e) {
-    }
+    } catch (e) {}
   }, [])
+
+  const isValid = validate(roomId)
 
   return (
     <div className="flex h-3/4 w-full flex-col justify-evenly md:flex-row">
@@ -44,11 +47,17 @@ export default function HomeLayout() {
           className="flex w-full flex-col items-center justify-start gap-4 md:w-4/5 md:flex-row"
           onSubmit={(e) => {
             e.preventDefault()
-            router.push(`/room/${roomId}`)
+            setJoining(true)
+            if (isValid) {
+              router.push(`/room/${roomId}`)
+            } else {
+              setJoining(false)
+            }
           }}
         >
           <input
-            className="flex-0 main-input relative z-10 w-full md:w-3/5"
+            className="flex-0 main-input relative z-10 w-full border-2 md:w-3/5"
+            style={isValid ? {} : { borderColor: 'red' }}
             type="text"
             value={roomId}
             placeholder="ID de la sala"
@@ -65,7 +74,7 @@ export default function HomeLayout() {
                   type="submit"
                   className="z-0 inline-flex h-full w-full items-center justify-center rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
                 >
-                  Entrar
+                  {joining ? <LoadingIcon /> : 'Conectar'}
                 </motion.button>
               )}
             </AnimatePresence>
@@ -81,6 +90,10 @@ export default function HomeLayout() {
             </Link>
           </div>
         </form>
+
+        <p className="text-center text-red-500">
+          {!isValid && 'El ID de la sala no es válido'}
+        </p>
       </div>
       <div
         className="flex h-full w-full flex-col items-center justify-center md:w-1/2"

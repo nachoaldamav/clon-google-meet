@@ -23,7 +23,7 @@ export default function CopyLink() {
         >
           <XIcon />
         </button>
-        <h5 className="mb-4 text-left font-bold text-black">Copiar ID</h5>
+        <h5 className="mb-4 text-left font-bold text-black">Copiar enlace</h5>
         <div className="flex flex-row items-center gap-2">
           <input
             type="text"
