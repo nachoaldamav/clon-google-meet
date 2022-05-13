@@ -32,13 +32,21 @@ export default function HomeLayout() {
     } catch (e) {}
   }, [])
 
-  const isValid = validate(roomId)
+  const isValid = roomId ? validate(roomId) : true
 
   return (
     <div className="flex h-3/4 w-full flex-col justify-evenly md:flex-row">
       <div className="flex w-full flex-col items-start justify-center gap-4 md:w-1/2">
-        <h1 className="text-3xl font-bold text-gray-200">
-          Videollamadas premium
+        <h1 className="flex w-fit flex-col justify-center gap-2 text-3xl font-bold text-gray-200 md:flex-row md:justify-start">
+          Videollamadas{' '}
+          <div className="group relative inline-flex gap-2">
+            <span className="underline decoration-dotted underline-offset-2">
+              premium
+            </span>
+            <span className="top-0 right-0 text-xs opacity-0 group-hover:opacity-25">
+              (O no :P)
+            </span>
+          </div>
         </h1>
         <p className="text-gray-400">
           Conecta con tus amigos y comparte tu vídeo llamada
@@ -73,6 +81,10 @@ export default function HomeLayout() {
                   }}
                   type="submit"
                   className="z-0 inline-flex h-full w-full items-center justify-center rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
+                  style={{
+                    opacity: !isValid ? 0.5 : 1,
+                    cursor: !isValid ? 'not-allowed' : 'pointer',
+                  }}
                 >
                   {joining ? <LoadingIcon /> : 'Conectar'}
                 </motion.button>
@@ -91,7 +103,7 @@ export default function HomeLayout() {
           </div>
         </form>
 
-        <p className="text-center text-red-500">
+        <p className="h-1 text-center text-red-500">
           {!isValid && 'El ID de la sala no es válido'}
         </p>
       </div>

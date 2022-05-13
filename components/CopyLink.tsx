@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import XIcon from './icons/X'
 import confetti from 'canvas-confetti'
+import CopyIcon from './icons/Copy'
 
 export default function CopyLink() {
   const [roomId, setRoomId] = useState('')
@@ -14,7 +15,7 @@ export default function CopyLink() {
 
   return (
     !closed && (
-      <div className="absolute bottom-0 left-0 z-50 m-10 h-fit w-fit rounded-lg bg-white p-4 text-black">
+      <div className="absolute bottom-0 left-0 z-50 m-2 h-fit w-fit rounded-lg bg-white p-4 text-black md:m-10 md:w-fit">
         <button
           className="absolute top-0 right-0 m-4 rounded border-2 border-transparent transition duration-150 hover:border-gray-200"
           onClick={() => {
@@ -24,16 +25,25 @@ export default function CopyLink() {
           <XIcon />
         </button>
         <h5 className="mb-4 text-left font-bold text-black">Copiar enlace</h5>
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-0">
           <input
             type="text"
             value={roomId}
-            className="w-fit cursor-text rounded-lg border-2 border-gray-300 p-2 text-black"
+            className="relative w-full cursor-text rounded-lg rounded-r-none border-2 border-r-0 border-gray-300 p-2 text-black md:w-fit"
             disabled
           />
+          <button
+            className="h-full rounded-lg rounded-l-none border-2 border-l-0 border-gray-300 p-2"
+            onClick={() => {
+              navigator.clipboard.writeText(roomId)
+              setCopied(true)
+            }}
+          >
+            <CopyIcon />
+          </button>
           {!copied ? (
             <button
-              className="w-[5em] rounded-lg bg-blue-500 p-2 font-bold text-white"
+              className="ml-2 w-[5em] rounded-lg bg-blue-500 p-2 font-bold text-white"
               id="copy-button"
               onClick={() => {
                 navigator.clipboard.writeText(
@@ -55,7 +65,7 @@ export default function CopyLink() {
             </button>
           ) : (
             <button
-              className="w-[5em] rounded-lg bg-green-700 p-2 font-bold text-white"
+              className="ml-2 w-[5em] rounded-lg bg-green-700 p-2 font-bold text-white"
               id="copy-button"
               onClick={() => {
                 setCopied(false)

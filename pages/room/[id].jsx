@@ -291,7 +291,7 @@ const ServerSidePage = ({ user }) => {
       <button
         className="visible absolute top-0 right-0 z-50 m-4 rounded border text-lg md:hidden"
         style={{
-          color: !asideOpen ? '#fff' : '#000',
+          color: !asideOpen ? '#fff' : 'white',
         }}
         onClick={() => setAsideOpen(!asideOpen)}
       >
@@ -314,7 +314,7 @@ const ServerSidePage = ({ user }) => {
       <aside
         className={
           asideOpen
-            ? 'relative flex h-full w-96 flex-1 flex-col justify-end rounded-l-lg border-2 border-[#2e2b3b] bg-[#181622] text-white'
+            ? 'relative flex h-full w-full flex-1 flex-col justify-end rounded-l-lg border-2 border-[#2e2b3b] bg-[#181622] text-white md:w-96'
             : 'relative hidden h-[95%] w-96 flex-1 flex-col justify-end rounded-l-lg border-2 border-[#2e2b3b] bg-[#181622] text-white md:flex'
         }
       >
